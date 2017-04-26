@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sää, Rauma, Lappi</title>
+</head>
+<body>
+
+  
+  <table border="1">
+    <tbody>
+      <tr>
+        <th>Lämpötila:</th>
+        <td th:text="${{stationdata.temperature}}">10</td>
+      </tr>
+      <tr>
+        <th>Tuntuu kuin:</th>
+        <td th:text="${{stationdata.temperatureFeelsLike}}">5</td>
+      </tr>
+      <tr>
+        <th>Ilmanpaine:</th>
+        <td th:text="${{stationdata.airPressure}}">1000</td>
+      </tr>
+      <tr>
+        <th>Sade:</th>
+        <td th:text="${{stationdata.rain}}">1</td>
+      </tr>
+      <tr>
+        <th>Sade 10 min:</th>
+        <td th:text="${{stationdata.rain10}}">10</td>
+      </tr>
+      <tr>
+        <th>Sade 60 min:</th>
+        <td th:text="${{stationdata.rain60}}">60</td>
+      </tr>
+      <tr>
+        <th>Tuuli:</th>
+        <td th:text="${{stationdata.windSpeed}}">4</td>
+      </tr>
+      <tr>
+        <th>Tuulen suunta:</th>
+        <td th:text="${{stationdata.windDirection}}">180</td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

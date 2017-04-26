@@ -1,0 +1,6 @@
+spring.datasource.url=jdbc:postgresql://roope.local:5433/weather
+spring.datasource.username=weather
+spring.datasource.password=********
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+logging.level.org.koivusaari.weather: DEBUG
