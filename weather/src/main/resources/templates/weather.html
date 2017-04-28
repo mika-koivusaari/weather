@@ -38,7 +38,7 @@
       </tr>
       <tr>
         <th>Tuulen suunta:</th>
-        <td th:text="${{stationdata.windDirection}}">180</td>
+        <td><img th:src="@{${'/wind_dir/arrow_' + #numbers.formatInteger(stationdata.windDirection, 0) + '.png'}}"/></td>
       </tr>
     </tbody>
   </table>

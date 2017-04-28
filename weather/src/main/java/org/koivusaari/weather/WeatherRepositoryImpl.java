@@ -17,7 +17,22 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                            "WHERE  temperature.sensorid=111\n"+
                            "AND    temperature.time>(current_timestamp-interval '2 minute')\n"+
                            "ORDER BY 1 DESC";
-	
+    private final String selectRain10 = "SELECT (MAX(value)-MIN(value))*0.254 rain10\n"+
+    							         "FROM   DATA\n"+
+                                         "WHERE  sensorid=105\n"+
+                                         "AND    time>(current_timestamp-interval '10 minute')";	
+    private final String selectRain60 = "SELECT (MAX(value)-MIN(value))*0.254 rain60\n"+
+	         "FROM   DATA\n"+
+            "WHERE  sensorid=105\n"+
+            "AND    time>(current_timestamp-interval '10 minute')";	
+    private final String selectWindSpeed = "SELECT 0.44704*(1.25*(MAX(value)-MIN(value))/600) wind_speed\n"+
+                         	         "FROM   DATA\n"+
+                                     "WHERE  sensorid=106\n"+
+                                     "AND    time>(current_timestamp-interval '10 minute')";	
+    private final String selectWindDir = "SELECT round(avg(hb_ads_wind_vane_voltage_to_dir(value))) wind_direction\n"+
+                                         "FROM   DATA\n"+
+                                         "WHERE  sensorid=107\n"+
+                                         "AND    time>(current_timestamp-interval '10 minute')";	
 	NamedParameterJdbcTemplate jdbcTemplate;
 
 	public WeatherRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -28,6 +43,10 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 	public StationData findLastData() {
 		StationDataExtractor rse=new StationDataExtractor();
 		StationData sd=jdbcTemplate.query(selectBasic, rse);
+		sd=jdbcTemplate.query(selectRain10, rse);
+		sd=jdbcTemplate.query(selectRain60, rse);
+		sd=jdbcTemplate.query(selectWindSpeed, rse);
+		sd=jdbcTemplate.query(selectWindDir, rse);
 		return sd;
 	}
 
