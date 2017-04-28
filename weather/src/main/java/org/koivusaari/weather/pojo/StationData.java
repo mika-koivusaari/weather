@@ -40,8 +40,10 @@ public class StationData {
 	}
 	public Float getTemperatureFeelsLike() {
 		//formula from https://fi.wikipedia.org/wiki/Pakkasen_purevuus
-		if (temperature<10){
-		    return new Float(13.12+0.6215*temperature-13.956*Math.pow(windSpeed,0.16)+0.4867*temperature*Math.pow(windSpeed, 0.16));
+		if (temperature!=null && windSpeed!=null){
+			if (temperature<10){
+			    return new Float(13.12+0.6215*temperature-13.956*Math.pow(windSpeed,0.16)+0.4867*temperature*Math.pow(windSpeed, 0.16));
+			}
 		}
 		return temperature;
 	}
