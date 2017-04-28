@@ -15,7 +15,6 @@ public class StationData {
 	
 	private LocalDateTime time;
 	private Float temperature;
-	private Float temperatureFeelsLike;
 	private Float airPressure;
 	
 	private Float rain; //Last minute
@@ -40,10 +39,11 @@ public class StationData {
 		this.temperature = temperature;
 	}
 	public Float getTemperatureFeelsLike() {
-		return temperatureFeelsLike;
-	}
-	public void setTemperatureFeelsLike(Float temperatureFeelsLike) {
-		this.temperatureFeelsLike = temperatureFeelsLike;
+		//formula from https://fi.wikipedia.org/wiki/Pakkasen_purevuus
+		if (temperature<10){
+		    return new Float(13.12+0.6215*temperature-13.956*Math.pow(windSpeed,0.16)+0.4867*temperature*Math.pow(windSpeed, 0.16));
+		}
+		return temperature;
 	}
 	public Float getRain() {
 		return rain;
@@ -85,7 +85,7 @@ public class StationData {
 	public String toString() {
 		return String.format(
 				"StationData [time=%s, temperature=%s, temperatureFeelsLike=%s, airPressure=%s, rain=%s, rain10=%s, rain60=%s, windSpeed=%s, windDirection=%s]",
-				time, temperature, temperatureFeelsLike, airPressure, rain, rain10, rain60, windSpeed, windDirection);
+				time, temperature, getTemperatureFeelsLike(), airPressure, rain, rain10, rain60, windSpeed, windDirection);
 	}
 
 	
