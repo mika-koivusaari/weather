@@ -41,11 +41,17 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 	}
 
 	public StationData findLastData() {
+		log.debug("getLastData");
 		StationDataExtractor rse=new StationDataExtractor();
+		log.debug("basic");
 		StationData sd=jdbcTemplate.query(selectBasic, rse);
+		log.debug("rain10");
 		sd=jdbcTemplate.query(selectRain10, rse);
+		log.debug("rain60");
 		sd=jdbcTemplate.query(selectRain60, rse);
+		log.debug("wind speed");
 		sd=jdbcTemplate.query(selectWindSpeed, rse);
+		log.debug("wind direction");
 		sd=jdbcTemplate.query(selectWindDir, rse);
 		return sd;
 	}
