@@ -1,6 +1,6 @@
 package org.koivusaari.weather;
 
-import org.koivusaari.weather.pojo.StationData;
+import org.koivusaari.weather.pojo.WeatherData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -40,11 +40,11 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public StationData findLastData() {
+	public WeatherData findLastData() {
 		log.debug("getLastData");
-		StationDataExtractor rse=new StationDataExtractor();
+		WeatherDataExtractor rse=new WeatherDataExtractor();
 		log.debug("basic");
-		StationData sd=jdbcTemplate.query(selectBasic, rse);
+		WeatherData sd=jdbcTemplate.query(selectBasic, rse);
 		log.debug("rain10");
 		sd=jdbcTemplate.query(selectRain10, rse);
 		log.debug("rain60");

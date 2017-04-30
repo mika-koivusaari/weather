@@ -11,7 +11,7 @@ import java.util.Date;
  * All datafields of one station in one point in time.
  *
  */
-public class StationData {
+public class WeatherData {
 	
 	private LocalDateTime time;
 	private Float temperature;

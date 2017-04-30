@@ -1,6 +1,6 @@
 package org.koivusaari.weather;
 
-import org.koivusaari.weather.pojo.StationData;
+import org.koivusaari.weather.pojo.WeatherData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,9 +20,9 @@ public class WeatherController {
 
 	@RequestMapping("/weather")
     public String createGraph(Model model) {
-		StationData stationData=weatherRepository.findLastData();
-		log.debug("StationData: "+stationData);
-        model.addAttribute("stationdata", stationData);
+		WeatherData weatherData=weatherRepository.findLastData();
+		log.debug("WeatherData: "+weatherData);
+        model.addAttribute("weatherdata", weatherData);
         return "weather";
     }
 

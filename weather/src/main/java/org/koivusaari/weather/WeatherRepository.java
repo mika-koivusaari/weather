@@ -1,8 +1,8 @@
 package org.koivusaari.weather;
 
-import org.koivusaari.weather.pojo.StationData;
+import org.koivusaari.weather.pojo.WeatherData;
 
 public interface WeatherRepository {
 
-	StationData findLastData();
+	WeatherData findLastData();
 }

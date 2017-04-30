@@ -10,20 +10,20 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import org.koivusaari.weather.pojo.StationData;
+import org.koivusaari.weather.pojo.WeatherData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-public class StationDataExtractor implements ResultSetExtractor<StationData> {
+public class WeatherDataExtractor implements ResultSetExtractor<WeatherData> {
 
-	private static final Logger log = LoggerFactory.getLogger(StationDataExtractor.class);
-	private StationData stationData;
+	private static final Logger log = LoggerFactory.getLogger(WeatherDataExtractor.class);
+	private WeatherData weatherData;
 	
-	public StationData extractData(ResultSet rs) throws SQLException, DataAccessException {
-		if (stationData==null) {
-			stationData=new StationData();
+	public WeatherData extractData(ResultSet rs) throws SQLException, DataAccessException {
+		if (weatherData==null) {
+			weatherData=new WeatherData();
 		}
 		ResultSetMetaData rsmt=rs.getMetaData();
 		log.debug("Next call: "+rs.next());
@@ -36,8 +36,8 @@ public class StationDataExtractor implements ResultSetExtractor<StationData> {
 				value=new Float(((Number)value).floatValue());
 			}
 			try {
-				Method m=stationData.getClass().getMethod(generateMethodName(rsmt.getColumnLabel(i)), new Class[]{value.getClass()});
-				m.invoke(stationData, value);
+				Method m=weatherData.getClass().getMethod(generateMethodName(rsmt.getColumnLabel(i)), new Class[]{value.getClass()});
+				m.invoke(weatherData, value);
 			} catch (NoSuchMethodException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -56,7 +56,7 @@ public class StationDataExtractor implements ResultSetExtractor<StationData> {
 			}
 		}
 		
-		return stationData;
+		return weatherData;
 	}
 	
 	protected String generateMethodName(String columname){

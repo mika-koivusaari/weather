@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import org.koivusaari.weather.pojo.StationData;
+import org.koivusaari.weather.pojo.WeatherData;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 
 public class StationDataExtractorTest extends TestCase {
 
-	private StationDataExtractor ste;
+	private WeatherDataExtractor ste;
 	@Mock
 	private ResultSet rs;
 	@Mock
@@ -30,7 +30,7 @@ public class StationDataExtractorTest extends TestCase {
 
 	protected void setUp() throws Exception {
 	    MockitoAnnotations.initMocks(this);
-		ste=new StationDataExtractor();
+		ste=new WeatherDataExtractor();
 		super.setUp();
 	}
 
@@ -49,7 +49,7 @@ public class StationDataExtractorTest extends TestCase {
 	    when(rs.getObject(1)).thenReturn(new Date(117, 0, 1, 12, 10));
 	    when(rsmt.getColumnLabel(1)).thenReturn("TIME");
 	    
-	    StationData st=ste.extractData(rs);
+	    WeatherData st=ste.extractData(rs);
 	    assertEquals(LocalDateTime.of(2017, 1, 1, 12, 10), st.getTime());
 	}
 	public void testExtractDataNumber() throws SQLException{
@@ -59,7 +59,7 @@ public class StationDataExtractorTest extends TestCase {
 	    when(rs.getObject(1)).thenReturn(new BigDecimal(1.1));
 	    when(rsmt.getColumnLabel(1)).thenReturn("TEMPERATURE");
 	    
-	    StationData st=ste.extractData(rs);
+	    WeatherData st=ste.extractData(rs);
 	    assertEquals(new Float(1.1), st.getTemperature());
 	}
 }

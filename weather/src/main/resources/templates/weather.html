@@ -10,35 +10,35 @@
     <tbody>
       <tr>
         <th>Lämpötila:</th>
-        <td th:text="${{stationdata.temperature}}">10</td>
+        <td th:text="${{weatherdata.temperature}}">10</td>
       </tr>
       <tr>
         <th>Tuntuu kuin:</th>
-        <td th:text="${{stationdata.temperatureFeelsLike}}">5</td>
+        <td th:text="${{weatherdata.temperatureFeelsLike}}">5</td>
       </tr>
       <tr>
         <th>Ilmanpaine:</th>
-        <td th:text="${{stationdata.airPressure}}">1000</td>
+        <td th:text="${{weatherdata.airPressure}}">1000</td>
       </tr>
       <tr>
         <th>Sade:</th>
-        <td th:text="${{stationdata.rain}}">1</td>
+        <td th:text="${{weatherdata.rain}}">1</td>
       </tr>
       <tr>
         <th>Sade 10 min:</th>
-        <td th:text="${{stationdata.rain10}}">10</td>
+        <td th:text="${{weatherdata.rain10}}">10</td>
       </tr>
       <tr>
         <th>Sade 60 min:</th>
-        <td th:text="${{stationdata.rain60}}">60</td>
+        <td th:text="${{weatherdata.rain60}}">60</td>
       </tr>
       <tr>
         <th>Tuuli:</th>
-        <td th:text="${{stationdata.windSpeed}}">4</td>
+        <td th:text="${{weatherdata.windSpeed}}">4</td>
       </tr>
       <tr>
         <th>Tuulen suunta:</th>
-        <td><img th:src="@{${'/wind_dir/arrow_' + #numbers.formatInteger(stationdata.windDirection, 0) + '.png'}}"/></td>
+        <td><img th:src="@{${'/wind_dir/arrow_' + #numbers.formatInteger(weatherdata.windDirection, 0) + '.png'}}"/></td>
       </tr>
     </tbody>
   </table>
