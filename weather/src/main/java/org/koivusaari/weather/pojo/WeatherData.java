@@ -41,7 +41,9 @@ public class WeatherData {
 	public Float getTemperatureFeelsLike() {
 		//formula from https://fi.wikipedia.org/wiki/Pakkasen_purevuus
 		if (temperature!=null && windSpeed!=null){
-			if (temperature<10){
+			//Formula only applicaple if temp is less than 10
+			//and there is some wind.
+			if (temperature<10 && windSpeed>0){
 			    return new Float(13.12+0.6215*temperature-13.956*Math.pow(windSpeed,0.16)+0.4867*temperature*Math.pow(windSpeed, 0.16));
 			}
 		}
