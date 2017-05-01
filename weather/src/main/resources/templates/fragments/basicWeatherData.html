@@ -1,4 +1,4 @@
-<div th:fragment="basic">
+<div th:fragment="basicAll">
   <table border="1">
     <tbody>
       <tr>
@@ -24,6 +24,10 @@
       <tr>
         <th>Sade 60 min:</th>
         <td th:text="${{weatherdata.rain60}}">60</td>
+      </tr>
+      <tr>
+        <th>Sade tänään:</th>
+        <td th:text="${{weatherdata.rainToday}}">24h</td>
       </tr>
       <tr>
         <th>Tuuli:</th>

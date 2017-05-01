@@ -23,8 +23,12 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                                          "AND    time>(current_timestamp-interval '10 minute')";	
     private final String selectRain60 = "SELECT (MAX(value)-MIN(value))*0.254 rain60\n"+
 	         "FROM   DATA\n"+
-            "WHERE  sensorid=105\n"+
-            "AND    time>(current_timestamp-interval '10 minute')";	
+           "WHERE  sensorid=105\n"+
+           "AND    time>(current_timestamp-interval '10 minute')";	
+    private final String selectRainToday = "SELECT (MAX(value)-MIN(value))*0.254 rain_today\n"+
+	         "FROM   DATA\n"+
+           "WHERE  sensorid=105\n"+
+           "AND    time>current_date";	
     private final String selectWindSpeed = "SELECT 0.44704*(1.25*(MAX(value)-MIN(value))/600) wind_speed\n"+
                          	         "FROM   DATA\n"+
                                      "WHERE  sensorid=106\n"+
@@ -49,6 +53,8 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 		sd=jdbcTemplate.query(selectRain10, rse);
 		log.debug("rain60");
 		sd=jdbcTemplate.query(selectRain60, rse);
+		log.debug("rainToday");
+		sd=jdbcTemplate.query(selectRainToday, rse);
 		log.debug("wind speed");
 		sd=jdbcTemplate.query(selectWindSpeed, rse);
 		log.debug("wind direction");

@@ -20,6 +20,7 @@ public class WeatherData {
 	private Float rain; //Last minute
 	private Float rain10; //Last 10 minutes
 	private Float rain60; //Last 60 minutes
+	private Float rainToday; //Last 60 minutes
 	private Float windSpeed; //Last 10 min average
 	private Float windDirection; //Last 10 min average
 	public LocalDateTime getTime() {
@@ -66,6 +67,12 @@ public class WeatherData {
 	}
 	public void setRain60(Float rain60) {
 		this.rain60 = rain60;
+	}
+	public Float getRainToday() {
+		return rainToday;
+	}
+	public void setRainToday(Float rainToday) {
+		this.rainToday = rainToday;
 	}
 	public Float getWindSpeed() {
 		return windSpeed;
