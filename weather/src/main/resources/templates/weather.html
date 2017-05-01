@@ -1,47 +1,15 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html 
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <title>Sää, Rauma, Lappi</title>
 </head>
 <body>
 
   
-  <table border="1">
-    <tbody>
-      <tr>
-        <th>Lämpötila:</th>
-        <td th:text="${{weatherdata.temperature}}">10</td>
-      </tr>
-      <tr>
-        <th>Tuntuu kuin:</th>
-        <td th:text="${{weatherdata.temperatureFeelsLike}}">5</td>
-      </tr>
-      <tr>
-        <th>Ilmanpaine:</th>
-        <td th:text="${{weatherdata.airPressure}}">1000</td>
-      </tr>
-      <tr>
-        <th>Sade:</th>
-        <td th:text="${{weatherdata.rain}}">1</td>
-      </tr>
-      <tr>
-        <th>Sade 10 min:</th>
-        <td th:text="${{weatherdata.rain10}}">10</td>
-      </tr>
-      <tr>
-        <th>Sade 60 min:</th>
-        <td th:text="${{weatherdata.rain60}}">60</td>
-      </tr>
-      <tr>
-        <th>Tuuli:</th>
-        <td th:text="${{weatherdata.windSpeed}}">4</td>
-      </tr>
-      <tr>
-        <th>Tuulen suunta:</th>
-        <td><img th:src="@{${'/wind_dir/arrow_' + #numbers.formatInteger(weatherdata.windDirection, 0) + '.png'}}"/></td>
-      </tr>
-    </tbody>
-  </table>
-
+    <div th:replace="fragments/basicWeatherData :: basic">
+      Basic data
+    </div>
 </body>
 </html>
