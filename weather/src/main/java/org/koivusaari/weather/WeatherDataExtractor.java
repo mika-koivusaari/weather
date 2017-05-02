@@ -29,30 +29,32 @@ public class WeatherDataExtractor implements ResultSetExtractor<WeatherData> {
 		log.debug("Next call: "+rs.next());
 		for (int i=1;i<=rsmt.getColumnCount();i++){
 			Object value=rs.getObject(i);
-			if (value instanceof Date) {
-				Instant instant = Instant.ofEpochMilli(((Date)value).getTime());
-    			value = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-			} else if (value instanceof Number){
-				value=new Float(((Number)value).floatValue());
-			}
-			try {
-				Method m=weatherData.getClass().getMethod(generateMethodName(rsmt.getColumnLabel(i)), new Class[]{value.getClass()});
-				m.invoke(weatherData, value);
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (value!=null){
+				if (value instanceof Date) {
+					Instant instant = Instant.ofEpochMilli(((Date)value).getTime());
+	    			value = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+				} else if (value instanceof Number){
+					value=new Float(((Number)value).floatValue());
+				}
+				try {
+					Method m=weatherData.getClass().getMethod(generateMethodName(rsmt.getColumnLabel(i)), new Class[]{value.getClass()});
+					m.invoke(weatherData, value);
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		
