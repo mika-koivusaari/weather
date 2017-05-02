@@ -1,0 +1,29 @@
+@CHARSET "UTF-8";
+
+body {
+	background-color: #e0f7fa;
+}
+
+h1 {
+	text-align: center;
+    background: linear-gradient(#00BCD4, #80DEEA);
+    border-style: solid;
+    border-color: #00BCD4;
+    border-radius: 0.3em;}
+
+th {
+    text-align: left;
+}
+
+td {
+    text-align: right;
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+}
+
+.data {
+    width: 80%;
+}

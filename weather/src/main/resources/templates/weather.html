@@ -4,12 +4,28 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <title>Sää, Rauma, Lappi</title>
+    <link rel="stylesheet" href="/main.css"/>
 </head>
 <body>
 
+    <h1>
+        Sääasema Rauma, Lappi, Kivikylä
+    </h1>
   
-    <div th:replace="fragments/basicWeatherData :: basicAll">
-      Basic data
+  <div class="center">
+    <div>
+      <span>Sivu päivitetty:</span>
+      <span th:text="${weatherdata.time}">1.1.2017 12:00</span>
     </div>
+    <div th:replace="fragments/basicWeatherData :: basicTemperature">
+      Temperature data
+    </div>
+    <div th:replace="fragments/basicWeatherData :: basicRain">
+      Rain data
+    </div>
+    <div th:replace="fragments/basicWeatherData :: basicWind">
+      Wind data
+    </div>
+  </div>
 </body>
 </html>
