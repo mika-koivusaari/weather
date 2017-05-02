@@ -42,39 +42,47 @@
 </div>
 
 <div th:fragment="basicAll">
-  <table class="data" border="1">
+  <table class="data">
     <tbody>
       <tr>
         <th>Lämpötila:</th>
         <td th:text="${{weatherdata.temperature}}">10</td>
+        <td>&deg;C</td>
       </tr>
       <tr>
         <th>Tuntuu kuin:</th>
         <td th:text="${{weatherdata.temperatureFeelsLike}}">5</td>
+        <td>&deg;</td>
       </tr>
       <tr>
         <th>Ilmanpaine:</th>
         <td th:text="${{weatherdata.airPressure}}">1000</td>
+        <td>hPa</td>
       </tr>
       <tr>
         <th>Sade:</th>
         <td th:text="${{weatherdata.rain}}">1</td>
+        <td>mm</td>
       </tr>
       <tr>
         <th>Sade 10 min:</th>
         <td th:text="${{weatherdata.rain10}}">10</td>
+        <td>mm</td>
       </tr>
       <tr>
         <th>Sade 60 min:</th>
         <td th:text="${{weatherdata.rain60}}">60</td>
+        <td>mm</td>
       </tr>
       <tr>
         <th>Sade tänään:</th>
         <td th:text="${{weatherdata.rainToday}}">24h</td>
+        <td>mm</td>
       </tr>
       <tr>
         <th>Tuuli:</th>
         <td th:text="${#numbers.formatDecimal(weatherdata.windSpeed,1,1)}">4</td>
+        <td>m/s</td>
       </tr>
       <tr>
         <th>Tuulen suunta:</th>
@@ -85,56 +93,59 @@
 </div>
 
 <div th:fragment="basicTemperature">
-  <h3>Lämpötila</h3>
-  <table class="data" border="1">
+  <table class="data">
+    <caption>Lämpötila</caption>
     <tbody>
       <tr>
         <th>Lämpötila:</th>
-        <td th:text="${{weatherdata.temperature}}">10</td>
+        <td th:text="${#numbers.formatDecimal(weatherdata.temperature,1,1)}">10</td>
+        <td class="unit">&deg;C</td>
       </tr>
       <tr>
         <th>Tuntuu kuin:</th>
-        <td th:text="${{weatherdata.temperatureFeelsLike}}">5</td>
+        <td th:text="${#numbers.formatDecimal(weatherdata.temperatureFeelsLike,1,1)}">5</td>
+        <td class="unit">&deg;C</td>
       </tr>
       <tr>
         <th>Ilmanpaine:</th>
-        <td th:text="${{weatherdata.airPressure}}">1000</td>
+        <td th:text="${#numbers.formatDecimal(weatherdata.airPressure,1,1)}">1000</td>
+        <td class="unit">hPa</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <div th:fragment="basicRain">
-  <h3>Sadanta</h3>
-  <table class="data" border="1">
+  <table class="data">
+    <caption>Sadanta</caption>
     <tbody>
       <tr>
-        <th>Sade:</th>
-        <td th:text="${{weatherdata.rain}}">1</td>
-      </tr>
-      <tr>
         <th>Sade 10 min:</th>
-        <td th:text="${{weatherdata.rain10}}">10</td>
+        <td th:text="${#numbers.formatDecimal(weatherdata.rain10,1,1)}">10</td>
+        <td class="unit">mm</td>
       </tr>
       <tr>
         <th>Sade 60 min:</th>
-        <td th:text="${{weatherdata.rain60}}">60</td>
+        <td th:text="${#numbers.formatDecimal(weatherdata.rain60,1,1)}">60</td>
+        <td class="unit">mm</td>
       </tr>
       <tr>
         <th>Sade tänään:</th>
-        <td th:text="${{weatherdata.rainToday}}">24h</td>
+        <td th:text="${#numbers.formatDecimal(weatherdata.rainToday,1,1)}">24h</td>
+        <td class="unit">mm</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <div th:fragment="basicWind">
-  <h3>Tuuli</h3>
-  <table class="data" border="1">
+  <table class="data">
+    <caption>Tuuli</caption>
     <tbody>
       <tr>
         <th>Tuuli:</th>
         <td th:text="${#numbers.formatDecimal(weatherdata.windSpeed,1,1)}">4</td>
+        <td class="unit">m/s</td>
       </tr>
       <tr>
         <th>Tuulen suunta:</th>

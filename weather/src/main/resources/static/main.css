@@ -4,7 +4,7 @@ body {
 	background-color: #e0f7fa;
 }
 
-h1 {
+h1,caption {
 	text-align: center;
     background: linear-gradient(#00BCD4, #80DEEA);
     border-style: solid;
@@ -18,6 +18,9 @@ th {
 td {
     text-align: right;
 }
+td.unit {
+    text-align: left;
+}
 
 .center {
     margin: auto;
@@ -26,4 +29,8 @@ td {
 
 .data {
     width: 80%;
+}
+
+.no-wrap {
+    white-space: nowrap;
 }

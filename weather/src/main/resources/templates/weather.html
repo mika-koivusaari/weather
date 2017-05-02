@@ -13,9 +13,9 @@
     </h1>
   
   <div class="center">
-    <div>
+    <div class="center">
       <span>Sivu päivitetty:</span>
-      <span th:text="${weatherdata.time}">1.1.2017 12:00</span>
+      <span class="no-wrap" th:text="${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')}">1.1.2017 12:00</span>
     </div>
     <div th:replace="fragments/basicWeatherData :: basicTemperature">
       Temperature data
