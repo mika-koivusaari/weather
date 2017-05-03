@@ -8,6 +8,9 @@
 </head>
 <body>
 
+    <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
+    </script>
+
     <h1>
         Sääasema Rauma, Lappi, Kivikylä
     </h1>
