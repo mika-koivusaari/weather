@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.koivusaari</groupId>
   <artifactId>weather</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <name>weather</name>
   <packaging>jar</packaging>
 
