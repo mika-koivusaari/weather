@@ -17,6 +17,8 @@ public class WeatherController {
 	private TemplateResolver templateResolver;
 	@Value("${google.analytics.id:#{null}}")
 	private String analId;
+	@Value("${weather.site:#{null}}")
+	private String site;
 	
 	private WeatherRepository weatherRepository;
 	private static final Logger log = LoggerFactory.getLogger(WeatherController.class);
@@ -32,6 +34,7 @@ public class WeatherController {
 		log.debug("WeatherData: "+weatherData);
         model.addAttribute("weatherdata", weatherData);
         model.addAttribute("analId", analId);
+        model.addAttribute("site", site);
 
         templateResolver.initialize();
         log.debug(templateResolver.toString());

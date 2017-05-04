@@ -11,6 +11,10 @@
     <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
     </script>
 
+    <div class="site center" th:if="${site!=null}" th:inline="text">
+        [[${site}]]
+    </div>
+
     <h1>
         Sääasema Rauma, Lappi, Kivikylä
     </h1>
