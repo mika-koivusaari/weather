@@ -9,7 +9,8 @@ h1,caption {
     background: linear-gradient(#00BCD4, #80DEEA);
     border-style: solid;
     border-color: #00BCD4;
-    border-radius: 0.3em;}
+    border-radius: 0.3em;
+}
 
 th {
     text-align: left;
@@ -33,4 +34,17 @@ td.unit {
 
 .no-wrap {
     white-space: nowrap;
+}
+
+.menu {
+	float: left;
+}
+
+.menuItem {
+	width: 100%;
+    text-align: center;
+    background-color: #80DEEA;
+    border-style: solid;
+    border-color: #00BCD4;
+    border-width: thin;
 }
