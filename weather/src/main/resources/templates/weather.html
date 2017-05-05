@@ -3,6 +3,59 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
+
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/3.2.1/jquery.js"
+        th:src="@{/webjars/jQuery/jquery.min.js}" type="text/javascript"></script>
+
+    <script type="text/javascript">
+/* <![CDATA[ */
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart','line']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+          var jsonData = $.ajax({
+          url: "http://localhost:8080/chartdata?id=1",
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        // Create the data table.
+        var data = new google.visualization.DataTable(jsonData);
+
+
+        var obj = JSON.parse(jsonData);
+      var options = {
+        hAxis: {
+          title: 'Time'
+        },
+        vAxes: {
+          0: {title: 'C'},
+          1: {title: 'Kenno'}
+        },
+        backgroundColor: '#f1f8e9',
+        'width':800,
+        'height':600
+      };
+      console.log(options);
+      console.log(JSON.stringify(options));
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+/* ]]> */
+    </script>
+
+
     <title>Sää, Rauma, Lappi</title>
     <link rel="stylesheet" href="/main.css"/>
 </head>
@@ -10,6 +63,10 @@
 
     <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
     </script>
+
+    <!--Div that will hold the pie chart-->
+    <div id="chart_div"></div>
+
 
     <div class="site center" th:if="${site!=null}" th:inline="text">
         [[${site}]]
