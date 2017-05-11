@@ -1,4 +1,4 @@
-package org.koivusaari.datachart;
+package org.koivusaari.weather;
 
 import org.koivusaari.weather.pojo.Graph;
 import org.springframework.data.repository.CrudRepository;

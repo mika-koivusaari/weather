@@ -1,6 +1,6 @@
-package org.koivusaari.datachart.pojo.googlecharts;
+package org.koivusaari.weather.pojo.googlecharts;
 
-import org.koivusaari.datachart.CustomDateSerializer;
+import org.koivusaari.weather.CustomDateSerializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

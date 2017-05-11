@@ -1,4 +1,4 @@
-package org.koivusaari.datachart;
+package org.koivusaari.weather;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -14,17 +14,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.koivusaari.datachart.DataMapper;
-import org.koivusaari.datachart.SensorRepository;
-import org.koivusaari.datachart.pojo.ChartRow;
-import org.koivusaari.datachart.pojo.GraphDataSeries;
-import org.koivusaari.datachart.pojo.Sensors;
-import org.koivusaari.datachart.pojo.googlecharts.ChartC;
-import org.koivusaari.datachart.pojo.googlecharts.ChartCol;
-import org.koivusaari.datachart.pojo.googlecharts.ChartData;
-import org.koivusaari.datachart.pojo.googlecharts.ChartV;
+import org.koivusaari.weather.DataMapper;
+import org.koivusaari.weather.SensorRepository;
+import org.koivusaari.weather.pojo.ChartRow;
 import org.koivusaari.weather.pojo.Graph;
+import org.koivusaari.weather.pojo.GraphDataSeries;
+import org.koivusaari.weather.pojo.Sensors;
 import org.koivusaari.weather.pojo.Series;
+import org.koivusaari.weather.pojo.googlecharts.ChartC;
+import org.koivusaari.weather.pojo.googlecharts.ChartCol;
+import org.koivusaari.weather.pojo.googlecharts.ChartData;
+import org.koivusaari.weather.pojo.googlecharts.ChartV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,17 +93,20 @@ public class ChartDataController {
 			} else {
 				Duration p=Duration.between(graph.getFrom(), graph.getTo());
 //				LocalDate to=LocalDate.now().plusDays(1);
-				LocalDateTime to=LocalDateTime.now();
+				LocalDateTime to=LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 				LocalDateTime from=to.minus(p);
 				params.put("from", Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
 				params.put("to", Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
+//				params.put("from", from);
+//				params.put("to", to);
 				log.info("Dynamic true.");
 				log.info("period: "+p);
-				log.info("fromDate: "+from);
-				log.info("toDate: "+to);
+				log.info("fromDate: "+params.get("from"));
+				log.info("toDate: "+params.get("to"));
 			}
 		}
 
+		log.debug("Params: "+params);
 		List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
     	ChartData chartData = dataToChart(data,graph);
         return chartData;

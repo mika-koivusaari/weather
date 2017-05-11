@@ -22,8 +22,6 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 @SpringBootApplication
 @Configuration
-@EnableJpaRepositories("org.koivusaari.datachart")
-@ComponentScan("org.koivusaari.datachart")
 public class App 
 {
 

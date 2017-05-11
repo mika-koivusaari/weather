@@ -1,4 +1,4 @@
-package org.koivusaari.datachart.pojo;
+package org.koivusaari.weather.pojo;
 
 public class AggregateFunction {
 	private String function;

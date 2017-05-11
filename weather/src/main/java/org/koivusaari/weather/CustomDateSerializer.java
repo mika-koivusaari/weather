@@ -1,4 +1,4 @@
-package org.koivusaari.datachart;
+package org.koivusaari.weather;
 
 
 import java.io.IOException;

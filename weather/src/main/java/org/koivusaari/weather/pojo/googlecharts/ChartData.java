@@ -1,4 +1,4 @@
-package org.koivusaari.datachart.pojo.googlecharts;
+package org.koivusaari.weather.pojo.googlecharts;
 
 import java.util.ArrayList;
 

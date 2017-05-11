@@ -1,4 +1,4 @@
-package org.koivusaari.datachart.pojo;
+package org.koivusaari.weather.pojo;
 
 import java.util.ArrayList;
 import java.util.Date;

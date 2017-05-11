@@ -1,24 +1,31 @@
 package org.koivusaari.weather.pojo;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import org.koivusaari.weather.LocalDateTimeConverter;
+
 @Entity
-public class Graph {
+public class Graph implements Serializable {
 
 	@Id
 	private Long graphId;
     private String name;
     private String role;
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime from;
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime to;
     private Long dynamic;
     static final public long STATIC_TIME=0;
