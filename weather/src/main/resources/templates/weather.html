@@ -31,15 +31,18 @@
         // Create the data table.
         var data = new google.visualization.DataTable(jsonData);
 
+        var formatter = new google.visualization.DateFormat({pattern: 'HH:mm'});
+        formatter.format(data, 0);
 
         var obj = JSON.parse(jsonData);
       var options = {
         hAxis: {
-          title: 'Time'
-        },
+            format: 'HH',
+            gridlines: {count: 8}
+          },
         vAxes: {
           0: {title: 'C'},
-          1: {title: 'Kenno'}
+          1: {title: 'mm'}
         },
         backgroundColor: '#f1f8e9',
         'width':400,
