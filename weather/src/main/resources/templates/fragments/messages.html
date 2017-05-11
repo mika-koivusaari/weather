@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>Messages</title>
+</head>
+<body>
+
+<div th:if="${not #lists.isEmpty(messages)}" class="center" th:fragment="currentMessages">
+  <table class="messages">
+    <tr>
+      <th>Tila</th>
+      <th>Alkoi</th>
+      <th>Loppui</th>
+    </tr>
+    <tr th:each="m : ${messages}">
+      <td th:text="${m.message}">Message</td>
+      <td th:text="*{m.from != null} ? ${#temporals.format(m.from, 'dd.MM.yyyy HH:mm')} : ''">From</td>
+      <td th:text="*{m.to != null} ? ${#temporals.format(m.to, 'dd.MM.yyyy HH:mm')} : ''">To</td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>

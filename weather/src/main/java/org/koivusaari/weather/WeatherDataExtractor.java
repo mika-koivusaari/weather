@@ -26,7 +26,11 @@ public class WeatherDataExtractor implements ResultSetExtractor<WeatherData> {
 			weatherData=new WeatherData();
 		}
 		ResultSetMetaData rsmt=rs.getMetaData();
-		log.debug("Next call: "+rs.next());
+		boolean next=rs.next();
+		log.debug("Next call: "+next);
+		if (!next) {
+			return null;
+		}
 		for (int i=1;i<=rsmt.getColumnCount();i++){
 			Object value=rs.getObject(i);
 			if (value!=null){

@@ -75,6 +75,10 @@
     <h1>
         Sääasema Rauma, Lappi, Kivikylä
     </h1>
+
+  <div th:replace="fragments/messages :: currentMessages">
+    Viestit
+  </div>
   
   <div th:replace="fragments/menu :: leftMenu">
     Menu
@@ -83,7 +87,7 @@
   <div class="center">
     <div class="center">
       <span>Sivu päivitetty:</span>
-      <span class="no-wrap" th:text="${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')}">1.1.2017 12:00</span>
+      <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
     </div>
     <div th:replace="fragments/basicWeatherData :: basicTemperature">
       Temperature data

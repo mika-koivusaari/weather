@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.koivusaari</groupId>
   <artifactId>weather</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <name>weather</name>
   <packaging>jar</packaging>
 
@@ -78,11 +78,10 @@
 		    <groupId>org.thymeleaf.extras</groupId>
 		    <artifactId>thymeleaf-extras-java8time</artifactId>
 		</dependency>
-		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-java8</artifactId>
-		    <version>${hibernate.version}</version>
-		</dependency>
+       <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-java8</artifactId>
+       </dependency>
   </dependencies>
 
   <build>
