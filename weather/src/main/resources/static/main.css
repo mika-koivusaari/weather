@@ -62,3 +62,7 @@ table.messages {
 th.messages {
 	text-align: center;
 }
+
+.chart {
+    float: right;
+}

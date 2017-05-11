@@ -42,8 +42,8 @@
           1: {title: 'Kenno'}
         },
         backgroundColor: '#f1f8e9',
-        'width':800,
-        'height':600
+        'width':400,
+        'height':300
       };
       console.log(options);
       console.log(JSON.stringify(options));
@@ -64,10 +64,6 @@
     <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
     </script>
 
-    <!--Div that will hold the pie chart-->
-    <div id="chart_div"></div>
-
-
     <div class="site center" th:if="${site!=null}" th:inline="text">
         [[${site}]]
     </div>
@@ -83,6 +79,9 @@
   <div th:replace="fragments/menu :: leftMenu">
     Menu
   </div>
+
+    <!--Div that will hold the pie chart-->
+    <div id="chart_div" class="chart">Graafi</div>
   
   <div class="center">
     <div class="center">
@@ -99,5 +98,6 @@
       Wind data
     </div>
   </div>
+
 </body>
 </html>
