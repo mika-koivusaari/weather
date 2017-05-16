@@ -9,11 +9,74 @@
     <script src="http://cdn.jsdelivr.net/webjars/jquery/3.2.1/jquery.js"
         th:src="@{/webjars/jQuery/jquery.min.js}" type="text/javascript"></script>
 
+
+
+    <title>Sää, Rauma, Lappi</title>
+    <link rel="stylesheet" href="/main.css"/>
+</head>
+<body>
+
+    <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
+    </script>
+
+    <div class="site center" th:if="${site!=null}" th:inline="text">
+        [[${site}]]
+    </div>
+
+    <h1>
+        Sääasema Rauma, Lappi, Kivikylä
+    </h1>
+
+  <div th:replace="fragments/messages :: currentMessages">
+    Viestit
+  </div>
+
+  <div class="page-updated">
+    <span>Sivu päivitetty:</span>
+    <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
+  </div>
+  
+  <div class="container">
+
+    <div th:replace="fragments/menu :: leftMenu">
+      Menu
+    </div>
+
+    <div class="center">
+      <div class="container">
+        <div>
+          <div th:replace="fragments/basicWeatherData :: basicTemperature">
+            Temperature data
+          </div>
+          <div th:replace="fragments/basicWeatherData :: basicRain">
+            Rain data
+          </div>
+        </div>
+        <div>
+          <!--Div that will hold the temp/rain chart-->
+          <div id="chart_temp" class="chart"></div>
+        </div>
+      </div>
+    
+      <div class="container">
+        <div th:replace="fragments/basicWeatherData :: basicWind">
+          Wind data
+        </div>
+        <div>
+          <!--Div that will hold the wind chart-->
+          <div id="chart_wind" class="chart"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
     <script type="text/javascript">
 /* <![CDATA[ */
       // Load the Visualization API and the corechart package.
-      google.charts.load('current', {'packages':['corechart','line']});
-
+      //google.charts.load('current', {'packages':['corechart','line']});
+      google.charts.load('current', {'packages':['corechart']});
+      
       // Set a callback to run when the Google Visualization API is loaded.
       google.charts.setOnLoadCallback(drawChart);
 
@@ -42,65 +105,30 @@
           },
         vAxes: {
           0: {title: 'C'},
-          1: {title: 'mm'}
+          1: {title: 'mm',
+              viewWindow: {min: 0,
+                           max: 14}
+             }
         },
         backgroundColor: '#f1f8e9',
-        'width':400,
-        'height':300
+        seriesType: 'line',
+        series: {0: {type: 'line',
+                     targetAxisIndex: 0,
+                     color: '#ff0000'}
+                ,1: {type: 'bars',
+                     targetAxisIndex: 1,
+                     color: '#0000ff'}}
       };
       console.log(options);
       console.log(JSON.stringify(options));
 
         // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        //var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_temp'));
         chart.draw(data, options);
       }
 /* ]]> */
     </script>
-
-
-    <title>Sää, Rauma, Lappi</title>
-    <link rel="stylesheet" href="/main.css"/>
-</head>
-<body>
-
-    <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
-    </script>
-
-    <div class="site center" th:if="${site!=null}" th:inline="text">
-        [[${site}]]
-    </div>
-
-    <h1>
-        Sääasema Rauma, Lappi, Kivikylä
-    </h1>
-
-  <div th:replace="fragments/messages :: currentMessages">
-    Viestit
-  </div>
-  
-  <div th:replace="fragments/menu :: leftMenu">
-    Menu
-  </div>
-
-    <!--Div that will hold the pie chart-->
-    <div id="chart_div" class="chart">Graafi</div>
-  
-  <div class="center">
-    <div class="center">
-      <span>Sivu päivitetty:</span>
-      <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
-    </div>
-    <div th:replace="fragments/basicWeatherData :: basicTemperature">
-      Temperature data
-    </div>
-    <div th:replace="fragments/basicWeatherData :: basicRain">
-      Rain data
-    </div>
-    <div th:replace="fragments/basicWeatherData :: basicWind">
-      Wind data
-    </div>
-  </div>
 
 </body>
 </html>

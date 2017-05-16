@@ -34,11 +34,15 @@ td.unit {
 }
 
 .data {
-    width: 80%;
+    width: 15em;
 }
 
 .no-wrap {
     white-space: nowrap;
+}
+
+.page-updated {
+	text-align: center;
 }
 
 .menu {
@@ -64,5 +68,17 @@ th.messages {
 }
 
 .chart {
-    float: right;
+/*     float: right; */
+    width: 400px;
+    height: 200px;
+}
+
+div {
+	border-style: none;
+	margin: inherit;
+}
+
+.container {
+	display:flex;
+	margin: 0.1em;
 }

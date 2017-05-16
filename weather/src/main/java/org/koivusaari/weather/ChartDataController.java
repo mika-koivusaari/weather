@@ -38,6 +38,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ChartDataController {
 
+	public enum GroupBy {
+		MONTH("month"),
+		WEEK("week"),
+		DAY("day"),
+		HOUR("hour");
+		
+		private String groupBy;
+		private GroupBy(String groupBy) {
+			this.groupBy = groupBy;
+		}
+	}
+
 	private static final Logger log = LoggerFactory.getLogger(ChartDataController.class);
 
 	NamedParameterJdbcTemplate jdbcTemplate;
@@ -169,22 +181,23 @@ public class ChartDataController {
 		String where="";
 		String groupBy="";
 
-		String trunc=getGroupBy(graph.getFrom(), graph.getTo());
+		String defaultTrunc=getGroupBy(graph.getFrom(), graph.getTo());
 		
 		select="SELECT time_series";
-		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '1 "+(trunc==null?"minute":trunc)+"') time_series\n";
+		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '1 "+(defaultTrunc==null?"minute":defaultTrunc)+"') time_series\n";
 //		for (int i=1;i<=graph.getSeries().size();i++){
 		int i=0;
     	for (Series series:graph.getSeries()){
     		i++;
 			if (series.getSensorid()!=null){
+				String trunc=series.getMinGroupByTime()==null?defaultTrunc:series.getMinGroupByTime();
 				String valueFunction=series.getValuefunction();
 	            String value="d"+i+".value";
 				select=select+", "+processValueFunction(value, valueFunction);
 				if (trunc==null){
 				    from  =from  +"       LEFT JOIN (select sensorid,time,value from data where sensorid=:"+i+") d"+i+" ON time_series = d"+i+".time\n";
 				} else {
-				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+"(value) as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
+				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
 				}
 				params.put(Integer.toString(i), series.getSensorid());
 			} else {
@@ -193,6 +206,8 @@ public class ChartDataController {
 				Matcher m = seriesIdPattern.matcher(valueFunction);
 				int j=1;
 				while (m.find()){
+					//TODO fix
+					String trunc=series.getMinGroupByTime()==null?defaultTrunc:series.getMinGroupByTime();
 					log.debug("Value "+m.group(1));
 					int seriesid=Integer.parseInt(m.group(1));
 					log.debug("GraphSeries("+seriesid+")="+graphSeriesMap.get(new Long(seriesid)));

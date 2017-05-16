@@ -15,6 +15,8 @@ public class Series {
     private String valuefunction;
 	private String name;
     private String description;
+    private String minGroupByTime;
+    
 	public Long getSeriesid() {
 		return seriesid;
 	}
@@ -51,6 +53,14 @@ public class Series {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getMinGroupByTime() {
+		return minGroupByTime;
+	}
+	public void setMinGroupByTime(String minGroupByTime) {
+		this.minGroupByTime = minGroupByTime;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return String.format("Series [seriesid=%s, sensorid=%s, groupby=%s, valuefunction=%s, name=%s, description=%s]",
