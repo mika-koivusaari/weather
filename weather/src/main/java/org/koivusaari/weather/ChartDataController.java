@@ -62,7 +62,10 @@ public class ChartDataController {
 	HashMap<Long,GraphDataSeries> dataSeriesMap=new HashMap<Long,GraphDataSeries>();
 	HashMap<Long,GraphDataSeries> graphSeriesMap=new HashMap<Long,GraphDataSeries>();
 	
-	public ChartDataController(NamedParameterJdbcTemplate jdbcTemplate, SensorRepository sensorRepository,GraphRepository graphRepository, GraphDataSeriesRepository graphDataSeriesRepository) {
+	public ChartDataController(NamedParameterJdbcTemplate jdbcTemplate
+			                  ,SensorRepository sensorRepository
+			                  ,GraphRepository graphRepository
+			                  ,GraphDataSeriesRepository graphDataSeriesRepository) {
 		super();
 		this.jdbcTemplate = jdbcTemplate;
 		this.sensorRepository = sensorRepository;
