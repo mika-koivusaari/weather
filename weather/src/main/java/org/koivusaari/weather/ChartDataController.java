@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.koivusaari.weather.SensorRepository;
 import org.koivusaari.weather.pojo.ChartRow;
 import org.koivusaari.weather.pojo.Graph;
 import org.koivusaari.weather.pojo.GraphDataSeries;
+import org.koivusaari.weather.pojo.GraphSeries;
 import org.koivusaari.weather.pojo.Sensors;
 import org.koivusaari.weather.pojo.Series;
 import org.koivusaari.weather.pojo.googlecharts.ChartC;
@@ -155,7 +158,9 @@ public class ChartDataController {
 		ArrayList<ChartCol> chartCols=new ArrayList<ChartCol>();
         chartCols.add(new ChartCol("time","datetime"));
         int i=0;
-        for (Series series:graph.getSeries()){
+//        for (Series series:graph.getSeries()){
+		for (GraphSeries gs:graph.getGraphSeries()){
+			Series series=gs.getSeries();
         	i++;
 //        for (int i=1;i<=data.get(0).getData().size();i++){
 //        	if ( dataSeriesMap.get(idList.get(i-1)).getSensorid()!=null) {
@@ -181,13 +186,19 @@ public class ChartDataController {
 		String where="";
 		String groupBy="";
 
-		String defaultTrunc=getGroupBy(graph.getFrom(), graph.getTo());
+//		String defaultTrunc=getGroupBy(graph.getFrom(), graph.getTo());
+		
+		String defaultTrunc=getSmallestTrunc(graph);
 		
 		select="SELECT time_series";
-		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '1 "+(defaultTrunc==null?"minute":defaultTrunc)+"') time_series\n";
+//		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '1 "+(defaultTrunc==null?"minute":defaultTrunc)+"') time_series\n";
+//		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
+		from  ="  FROM generate_series("+getTruncFunction(defaultTrunc, ":from::timestamp")+", :to::timestamp, '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
 //		for (int i=1;i<=graph.getSeries().size();i++){
 		int i=0;
-    	for (Series series:graph.getSeries()){
+//    	for (Series series:graph.getSeries()){
+		for (GraphSeries gs:graph.getGraphSeries()){
+			Series series=gs.getSeries();
     		i++;
 			if (series.getSensorid()!=null){
 				String trunc=series.getMinGroupByTime()==null?defaultTrunc:series.getMinGroupByTime();
@@ -197,7 +208,8 @@ public class ChartDataController {
 				if (trunc==null){
 				    from  =from  +"       LEFT JOIN (select sensorid,time,value from data where sensorid=:"+i+") d"+i+" ON time_series = d"+i+".time\n";
 				} else {
-				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
+//				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
+				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
 				}
 				params.put(Integer.toString(i), series.getSensorid());
 			} else {
@@ -231,6 +243,90 @@ public class ChartDataController {
 		return select+from+where+groupBy+" ORDER BY 1";
 	}
 
+	protected String getSmallestTrunc(Graph graph){
+		ArrayList<Trunc> truncs = new ArrayList<Trunc>(); 
+		for (GraphSeries gs:graph.getGraphSeries()){
+			Series series=gs.getSeries();
+			truncs.add(new Trunc(series.getMinGroupByTime()));
+		}
+		
+		Collections.sort(truncs);
+		return truncs.get(0).getTrunc();
+		
+	}
+	private class Trunc implements Comparable<Trunc>{
+		
+		private String trunc;
+		private Duration duration;
+		
+		public Trunc(String trunc){
+			if (trunc==null){
+				duration=Duration.of(1, ChronoUnit.MINUTES);
+				this.trunc="1 MINUTES";
+				return;
+			}
+			this.trunc=trunc;
+			Pattern groupByPattern = Pattern.compile("(\\d*) ?(\\D+)"); //numbers as groups  
+			Matcher m=groupByPattern.matcher(trunc);
+			if (m.matches()){
+			    String amount=m.group(1);
+			    if (amount.equals("")){
+			    	amount="1";
+			    }
+			    String unit=m.group(2);
+			    duration=Duration.of(Long.parseLong(amount), ChronoUnit.valueOf(unit));
+			} else {
+				duration=Duration.of(1, ChronoUnit.MINUTES);
+				this.trunc="1 MINUTES";
+			}
+		}
+
+		
+		public Duration getDuration() {
+			return duration;
+		}
+		public String getTrunc() {
+			return trunc;
+		}
+		public void setTrunc(String trunc) {
+			this.trunc = trunc;
+		}
+		public void setDuration(Duration duration) {
+			this.duration = duration;
+		}
+
+
+		@Override
+		public int compareTo(Trunc o) {
+			return duration.compareTo(o.getDuration());
+		}
+	}
+	
+	protected String getTruncFunction(String trunc){
+		return getTruncFunction(trunc, "time");
+	}
+	protected String getTruncFunction(String trunc,String field){
+		Pattern groupByPattern = Pattern.compile("(\\d+) (\\D+)"); //numbers as groups  
+		String function = null;
+		
+		Matcher m=groupByPattern.matcher(trunc);
+		if (m.matches()){
+			String amount=m.group(1);
+			String unit=m.group(2);
+			if (unit.equals("MINUTES")){
+				function="round_minutes("+field+","+amount+")";
+			} else if (unit.equals("HOURS")){
+				function="round_hours("+field+","+amount+")";
+			} else {
+//				throw new Exception("Unknown temporel unit: "+unit);
+				log.error("Unknown temporel unit: "+unit);
+			}
+		} else {
+			function="date_trunc('"+trunc+"',"+field+")";
+		}
+		return function;
+	}
+	
 	protected String processValueFunction(String value, String valueFunction){
 	    if (valueFunction==null) {
 	    	return value;

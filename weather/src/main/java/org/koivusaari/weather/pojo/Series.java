@@ -1,7 +1,10 @@
 package org.koivusaari.weather.pojo;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -16,6 +19,8 @@ public class Series {
 	private String name;
     private String description;
     private String minGroupByTime;
+    @OneToMany(mappedBy="series")
+    private List<GraphSeries> graphSeries;
     
 	public Long getSeriesid() {
 		return seriesid;
@@ -61,6 +66,12 @@ public class Series {
 	}
 	
 	
+	public List<GraphSeries> getGraphSeries() {
+		return graphSeries;
+	}
+	public void setGraphSeries(List<GraphSeries> graphSeries) {
+		this.graphSeries = graphSeries;
+	}
 	@Override
 	public String toString() {
 		return String.format("Series [seriesid=%s, sensorid=%s, groupby=%s, valuefunction=%s, name=%s, description=%s]",
