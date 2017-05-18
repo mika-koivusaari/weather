@@ -209,7 +209,7 @@ public class ChartDataController {
 				    from  =from  +"       LEFT JOIN (select sensorid,time,value from data where sensorid=:"+i+") d"+i+" ON time_series = d"+i+".time\n";
 				} else {
 //				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
-				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
+				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and :to::timestamp  group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
 				}
 				params.put(Integer.toString(i), series.getSensorid());
 			} else {
