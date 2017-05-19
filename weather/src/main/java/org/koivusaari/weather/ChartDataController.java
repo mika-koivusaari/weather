@@ -71,7 +71,6 @@ public class ChartDataController {
 		this.sensorRepository = sensorRepository;
 		this.graphRepository = graphRepository;
 		this.graphDataSeriesRepository = graphDataSeriesRepository;
-//		fillDataSeriesMap();
 	}
 
 	@CrossOrigin
@@ -83,40 +82,20 @@ public class ChartDataController {
 
 		Graph graph=graphRepository.findOne(Long.parseLong(graphId));
 
-//		ArrayList<Long> idaList=new ArrayList<Long>();
-//		for (int i=0;i<ida.length;i++){
-//			idaList.add(new Long(ida[i]));
-//		}
-//		ArrayList<Long> idbList=new ArrayList<Long>();
-//		if (idb!=null){
-//			for (int i=0;i<idb.length;i++){
-//				idbList.add(new Long(idb[i]));
-//			}
-//		}
-//		log.debug("debug");
 		log.info("Querying data for today:");
 		HashMap<String,Object> params=new HashMap<String,Object>();
 		String sql=createSelect(graph,params);
 		log.info("select:\n"+sql);
-//		HashMap<String,Object> params=new HashMap<String,Object>();
-//		for (int i=0;i<idList.size();i++){
-//			if (dataSeriesMap.get(idList.get(i)).getSensorid()!=null){
-//				params.put(Integer.toString(i+1), dataSeriesMap.get(idList.get(i)).getSensorid());
-//			}
-//		}
 		if (graph.getFrom()!=null || graph.getTo()!=null){
 			if (graph.getDynamic()==null||graph.getDynamic()==Graph.STATIC_TIME) {
 				params.put("from", Date.from(graph.getFrom().atZone(ZoneId.systemDefault()).toInstant()));
 				params.put("to", Date.from(graph.getTo().atZone(ZoneId.systemDefault()).toInstant()));
 			} else {
 				Duration p=Duration.between(graph.getFrom(), graph.getTo());
-//				LocalDate to=LocalDate.now().plusDays(1);
 				LocalDateTime to=LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 				LocalDateTime from=to.minus(p);
 				params.put("from", Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
 				params.put("to", Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
-//				params.put("from", from);
-//				params.put("to", to);
 				log.info("Dynamic true.");
 				log.info("period: "+p);
 				log.info("fromDate: "+params.get("from"));
@@ -161,21 +140,16 @@ public class ChartDataController {
 		ArrayList<ChartCol> chartCols=new ArrayList<ChartCol>();
         chartCols.add(new ChartCol("time","datetime"));
         int i=0;
-//        for (Series series:graph.getSeries()){
 		for (GraphSeries gs:graph.getGraphSeries()){
 			Series series=gs.getSeries();
         	i++;
-//        for (int i=1;i<=data.get(0).getData().size();i++){
-//        	if ( dataSeriesMap.get(idList.get(i-1)).getSensorid()!=null) {
         	if (series.getSensorid()!=null) {
-//            	Sensors sensors=sensorRepository.findOne(dataSeriesMap.get(idList.get(i-1)).getSensorid());
             	Sensors sensors=sensorRepository.findOne(series.getSensorid());
 	            chartCols.add(new ChartCol("c"+Integer.toString(i),"number",sensors.getName()));
 	            chartCols.get(i).setUnit(sensors.getUnitId().toString());
         	} else{
-//	            chartCols.add(new ChartCol("c"+Integer.toString(i),"number",dataSeriesMap.get(idList.get(i-1)).getName()));
 	            chartCols.add(new ChartCol("c"+Integer.toString(i),"number",series.getName()));
-	            chartCols.get(i).setUnit("-1"); //TODO
+	            chartCols.get(i).setUnit("-1"); //TODO get some unit for compound series
         	}
         		
         }
@@ -189,17 +163,13 @@ public class ChartDataController {
 		String where="";
 		String groupBy="";
 
+		//TODO Currently there is trunking of data with long timespans
 //		String defaultTrunc=getGroupBy(graph.getFrom(), graph.getTo());
-		
 		String defaultTrunc=getSmallestTrunc(graph);
 		
 		select="SELECT time_series";
-//		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '1 "+(defaultTrunc==null?"minute":defaultTrunc)+"') time_series\n";
-//		from  ="  FROM generate_series(:from::timestamp, :to::timestamp, '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
 		from  ="  FROM generate_series("+getTruncFunction(defaultTrunc, ":from::timestamp")+", :to::timestamp, '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
-//		for (int i=1;i<=graph.getSeries().size();i++){
 		int i=0;
-//    	for (Series series:graph.getSeries()){
 		for (GraphSeries gs:graph.getGraphSeries()){
 			Series series=gs.getSeries();
     		i++;
@@ -212,7 +182,6 @@ public class ChartDataController {
 				if (trunc=="1 MINUTES"){
 				    from  =from  +"       LEFT JOIN (select time as time, value as value from data where sensorid=:"+i+" and time between :from::timestamp and :to::timestamp) d"+i+" ON time_series = d"+i+".time\n";
 				} else {
-//				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
 				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time, "+(series.getGroupby()==null?"value":series.getGroupby())+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and :to::timestamp group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
 				}
 				params.put(Integer.toString(i), series.getSensorid());
@@ -222,7 +191,7 @@ public class ChartDataController {
 				Matcher m = seriesIdPattern.matcher(valueFunction);
 				int j=1;
 				while (m.find()){
-					//TODO fix
+					//TODO fix compound functions probably won't work
 					String trunc=series.getMinGroupByTime()==null?defaultTrunc:series.getMinGroupByTime();
 					log.debug("Value "+m.group(1));
 					int seriesid=Integer.parseInt(m.group(1));
@@ -334,8 +303,8 @@ public class ChartDataController {
 					function="round_hours("+field+","+amount+")";
 				}
 			} else {
-//				throw new Exception("Unknown temporel unit: "+unit);
-				log.error("Unknown temporel unit: "+unit);
+//				throw new Exception("Unknown temporal unit: "+unit);
+				log.error("Unknown temporal unit: "+unit);
 			}
 		} else {
 			function="date_trunc('"+trunc+"',"+field+")";
