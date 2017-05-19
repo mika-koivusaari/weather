@@ -207,12 +207,13 @@ public class ChartDataController {
 				String trunc=series.getMinGroupByTime()==null?defaultTrunc:series.getMinGroupByTime();
 				String valueFunction=series.getValuefunction();
 	            String value="d"+i+".value";
+	            log.debug("trunc="+trunc+" valueFunction="+valueFunction+" value="+value);
 				select=select+", "+processValueFunction(value, valueFunction);
-				if (trunc==null){
-				    from  =from  +"       LEFT JOIN (select sensorid,time,value from data where sensorid=:"+i+") d"+i+" ON time_series = d"+i+".time\n";
+				if (trunc=="1 MINUTES"){
+				    from  =from  +"       LEFT JOIN (select time as time, value as value from data where sensorid=:"+i+" and time between :from::timestamp and :to::timestamp) d"+i+" ON time_series = d"+i+".time\n";
 				} else {
 //				    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" group by date_trunc('"+trunc+"',time)) d"+i+" ON time_series = d"+i+".time\n";
-				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time ,"+series.getGroupby()+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and :to::timestamp  group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
+				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time, "+(series.getGroupby()==null?"value":series.getGroupby())+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and :to::timestamp group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
 				}
 				params.put(Integer.toString(i), series.getSensorid());
 			} else {
@@ -230,9 +231,9 @@ public class ChartDataController {
 					value="("+value+")";
 					valueFunction=valueFunction.replaceAll(m.group(),value );
 					if (trunc==null){
-					    from  =from  +"       LEFT JOIN (select sensorid,time,value from data where sensorid=:compound"+j+") combineddata"+j+" ON time_series = combineddata"+j+".time\n";
+					    from  =from  +"       LEFT JOIN (select time, value from data where sensorid=:compound"+j+") combineddata"+j+" ON time_series = combineddata"+j+".time\n";
 					} else {
-					    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time ,"+graphSeriesMap.get(new Long(seriesid)).getGroupby()+"(value) as value from data where sensorid=:compound"+j+" group by date_trunc('"+trunc+"',time)) combineddata"+j+" ON time_series = combineddata"+j+".time\n";
+					    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time, "+graphSeriesMap.get(new Long(seriesid)).getGroupby()+"(value) as value from data where sensorid=:compound"+j+" group by date_trunc('"+trunc+"',time)) combineddata"+j+" ON time_series = combineddata"+j+".time\n";
 					}
 					params.put("compound"+j, graphSeriesMap.get(new Long(seriesid)).getSensorid());
 					j++;
@@ -311,15 +312,27 @@ public class ChartDataController {
 	protected String getTruncFunction(String trunc,String field){
 		Pattern groupByPattern = Pattern.compile("(\\d+) (\\D+)"); //numbers as groups  
 		String function = null;
+
+		if (trunc==null) {
+			return field;
+		}
 		
 		Matcher m=groupByPattern.matcher(trunc);
 		if (m.matches()){
 			String amount=m.group(1);
 			String unit=m.group(2);
 			if (unit.equals("MINUTES")){
-				function="round_minutes("+field+","+amount+")";
+				if (amount.equals("1")){
+					function=field;
+				} else {
+					function="round_minutes("+field+","+amount+")";
+				}
 			} else if (unit.equals("HOURS")){
-				function="round_hours("+field+","+amount+")";
+				if (amount.equals("1")){
+					function="date_trunc('HOUR',"+field+")";
+				} else {
+					function="round_hours("+field+","+amount+")";
+				}
 			} else {
 //				throw new Exception("Unknown temporel unit: "+unit);
 				log.error("Unknown temporel unit: "+unit);

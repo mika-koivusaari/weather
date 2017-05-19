@@ -5,11 +5,14 @@ import junit.framework.TestCase;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.koivusaari.weather.pojo.ChartRow;
 import org.koivusaari.weather.pojo.Graph;
@@ -23,6 +26,8 @@ import org.koivusaari.weather.pojo.googlecharts.ChartData;
 import org.koivusaari.weather.pojo.googlecharts.ChartV;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class ChartDataControllerTest extends TestCase {
@@ -39,6 +44,8 @@ public class ChartDataControllerTest extends TestCase {
 	Graph graph;
 	private ChartDataController cdController;
 	
+	private static final Logger log = LoggerFactory.getLogger(ChartDataControllerTest.class);
+
 	public void setUp(){
 	    MockitoAnnotations.initMocks(this);
 	    fillGraphDataSeriesRepositoryMock(5,2);
@@ -164,28 +171,213 @@ public class ChartDataControllerTest extends TestCase {
 		assertEquals(4, cols.size());
 	}
 
-//	public void testCreateSelectDay() {
-//		ArrayList<Long> ids=new ArrayList<Long>();
-//		ids.add(new Long(1));
-//		ids.add(new Long(2));
-//		ids.add(new Long(3));
+	public void testGetSmallestTruncValues(){
+		ArrayList<GraphSeries> gsList=new ArrayList<GraphSeries>();
+
+		GraphSeries gs=new GraphSeries();
+		Series s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("1 MINUTES");
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		when(graph.getGraphSeries()).thenReturn(gsList);
+
+		assertEquals(null, "1 MINUTES", cdController.getSmallestTrunc(graph));
+	}
+
+	public void testGetSmallestTruncNull(){
+		ArrayList<GraphSeries> gsList=new ArrayList<GraphSeries>();
+
+		GraphSeries gs=new GraphSeries();
+		Series s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn(null);
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		when(graph.getGraphSeries()).thenReturn(gsList);
+
+		assertEquals(null, "1 MINUTES", cdController.getSmallestTrunc(graph));
+	}
+
+	public void testGetTruncFunctionNone(){
+		String function=cdController.getTruncFunction(null,"time");
+		assertEquals("time", function);
+	}
+
+	public void testGetTruncFunction1Hours(){
+		String function=cdController.getTruncFunction("1 HOURS","time");
+		assertEquals("date_trunc('HOUR',time)", function);
+	}
+
+	public void testGetTruncFunction3Hours(){
+		String function=cdController.getTruncFunction("3 HOURS","time");
+		assertEquals("round_hours(time,3)", function);
+	}
+
+	public void testGetTruncFunction1Minutes(){
+		String function=cdController.getTruncFunction("1 MINUTES","time");
+		assertEquals("time", function);
+	}
+
+	public void testGetTruncFunction10Minutes(){
+		String function=cdController.getTruncFunction("10 MINUTES","time");
+		assertEquals("round_minutes(time,10)", function);
+	}
+	
+	public void testCreateSelectDay() {
+		ArrayList<GraphSeries> gsList=new ArrayList<GraphSeries>();
+
+		GraphSeries gs=new GraphSeries();
+		Series s=mock(Series.class);
+//		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
+		when(s.getSensorid()).thenReturn(new Long(1));
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+//		when(s.getMinGroupByTime()).thenReturn("1 MINUTES");
+		when(s.getSensorid()).thenReturn(new Long(2));
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+//		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
+		when(s.getSensorid()).thenReturn(new Long(3));
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		when(graph.getGraphSeries()).thenReturn(gsList);
+		when(graph.getFrom()).thenReturn(LocalDateTime.of(2017, 1, 1, 0, 0));
+		when(graph.getTo()).thenReturn(LocalDateTime.of(2017, 1, 2, 0, 0));
+		
+		HashMap<String,Object> params=new HashMap<String,Object>();
+
+		String select=cdController.createSelect(graph,params);
+
+		log.debug(select);
+		log.debug(params.toString());
+		
+		String selectExpected="SELECT time_series, d1.value, d2.value, d3.value\n"+
+                              "  FROM generate_series(:from::timestamp, :to::timestamp, '1 MINUTES') time_series\n"+
+                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:1 and time between :from::timestamp and :to::timestamp) d1 ON time_series = d1.time\n"+
+                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:2 and time between :from::timestamp and :to::timestamp) d2 ON time_series = d2.time\n"+
+                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:3 and time between :from::timestamp and :to::timestamp) d3 ON time_series = d3.time\n"+
+                              " ORDER BY 1";
+		assertEquals(selectExpected, select);
+	}
+
+	public void testCreateSelectMinGroupBy() {
+		ArrayList<GraphSeries> gsList=new ArrayList<GraphSeries>();
+
+		GraphSeries gs=new GraphSeries();
+		Series s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
+		when(s.getGroupby()).thenReturn("AVG(value)");
+		when(s.getSensorid()).thenReturn(new Long(1));
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("1 MINUTES");
+		when(s.getSensorid()).thenReturn(new Long(2));
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		gs=new GraphSeries();
+		s=mock(Series.class);
+		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
+		when(s.getGroupby()).thenReturn("SUM(value)");
+		when(s.getSensorid()).thenReturn(new Long(3));
+		gs.setSeries(s);
+		gsList.add(gs);
+
+		when(graph.getGraphSeries()).thenReturn(gsList);
+		when(graph.getFrom()).thenReturn(LocalDateTime.of(2017, 1, 1, 0, 0));
+		when(graph.getTo()).thenReturn(LocalDateTime.of(2017, 1, 2, 0, 0));
+		
+		HashMap<String,Object> params=new HashMap<String,Object>();
+
+		String select=cdController.createSelect(graph,params);
+
+		log.debug(select);
+		log.debug(params.toString());
+		
+		String selectExpected="SELECT time_series, d1.value, d2.value, d3.value\n"+
+                              "  FROM generate_series(:from::timestamp, :to::timestamp, '1 MINUTES') time_series\n"+
+                              "       LEFT JOIN (select date_trunc('HOUR',time) as time, AVG(value) as value from data where sensorid=:1 and time between :from::timestamp and :to::timestamp group by date_trunc('HOUR',time)) d1 ON time_series = d1.time\n"+
+                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:2 and time between :from::timestamp and :to::timestamp) d2 ON time_series = d2.time\n"+
+                              "       LEFT JOIN (select round_minutes(time,10) as time, SUM(value) as value from data where sensorid=:3 and time between :from::timestamp and :to::timestamp group by round_minutes(time,10)) d3 ON time_series = d3.time\n"+
+                              " ORDER BY 1";
+		assertEquals(selectExpected, select);
+	}
+
+//	public void testCreateSelectWeek() {
+//		ArrayList<GraphSeries> gsList=new ArrayList<GraphSeries>();
 //
-////		GregorianCalendar cal = new GregorianCalendar();
-////		cal.set(2017, 0, 1, 0, 0);
-////		Date from=cal.getTime();
-//		LocalDate from=LocalDate.of(2017, 1, 1);
-////		cal.set(2017, 0, 1, 23, 0);
-////		Date to=cal.getTime();
-//		LocalDate to=LocalDate.of(2017, 1, 2);
+//		GraphSeries gs=new GraphSeries();
+//		Series s=mock(Series.class);
+////		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
+//		when(s.getSensorid()).thenReturn(new Long(1));
+//		gs.setSeries(s);
+//		gsList.add(gs);
+//
+//		gs=new GraphSeries();
+//		s=mock(Series.class);
+////		when(s.getMinGroupByTime()).thenReturn("1 MINUTES");
+//		when(s.getSensorid()).thenReturn(new Long(2));
+//		gs.setSeries(s);
+//		gsList.add(gs);
+//
+//		gs=new GraphSeries();
+//		s=mock(Series.class);
+////		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
+//		when(s.getSensorid()).thenReturn(new Long(3));
+//		gs.setSeries(s);
+//		gsList.add(gs);
+//
+//		when(graph.getGraphSeries()).thenReturn(gsList);
+//		when(graph.getFrom()).thenReturn(LocalDateTime.of(2017, 1, 1, 0, 0));
+//		when(graph.getTo()).thenReturn(LocalDateTime.of(2017, 1, 30, 0, 0));
+//		
 //		HashMap<String,Object> params=new HashMap<String,Object>();
 //
-//		String select=cdController.createSelect(ids,params,from,to);
+//		String select=cdController.createSelect(graph,params);
 //
+//		log.debug(select);
+//		log.debug(params.toString());
+//		
 //		String selectExpected="SELECT time_series, d1.value, d2.value, d3.value\n"+
-//                              "  FROM generate_series(:from::timestamp, :to::timestamp, '1 minute') time_series\n"+
-//                              "       LEFT JOIN (select sensorid,time,value from data where sensorid=:1) d1 ON time_series = d1.time\n"+
-//                              "       LEFT JOIN (select sensorid,time,value from data where sensorid=:2) d2 ON time_series = d2.time\n"+
-//                              "       LEFT JOIN (select sensorid,time,value from data where sensorid=:3) d3 ON time_series = d3.time\n"+
+//                              "  FROM generate_series(:from::timestamp, :to::timestamp, '1 MINUTES') time_series\n"+
+//                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:1 and time between :from::timestamp and :to::timestamp) d1 ON time_series = d1.time\n"+
+//                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:2 and time between :from::timestamp and :to::timestamp) d2 ON time_series = d2.time\n"+
+//                              "       LEFT JOIN (select time as time, value as value from data where sensorid=:3 and time between :from::timestamp and :to::timestamp) d3 ON time_series = d3.time\n"+
 //                              " ORDER BY 1";
 //		assertEquals(selectExpected, select);
 //	}
