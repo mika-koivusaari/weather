@@ -7,8 +7,170 @@
 <body>
 
 <div th:fragment="graphTemp">
+   <!--Div that will hold the temp/rain chart-->
+   <div id="chart_temp" class="chart"></div>
+    <script type="text/javascript">
+/* <![CDATA[ */
+      // Load the Visualization API and the corechart package.
+      //google.charts.load('current', {'packages':['corechart','line']});
+      google.charts.load('current', {'packages':['corechart']});
+      
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
 
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+          var jsonData = $.ajax({
+          url: "/chartdata?id=1",
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        // Create the data table.
+        var data = new google.visualization.DataTable(jsonData);
+
+        var formatter = new google.visualization.DateFormat({pattern: 'HH:mm'});
+        formatter.format(data, 0);
+
+        var obj = JSON.parse(jsonData);
+      var options = {
+        hAxis: {
+            format: 'HH',
+            gridlines: {count: 8}
+          },
+        vAxes: {
+          0: {title: 'C'},
+          1: {title: 'mm',
+              viewWindow: {min: 0,
+                           max: 14}
+             }
+        },
+        backgroundColor: '#f1f8e9',
+        seriesType: 'line',
+        series: {0: {type: 'line',
+                     targetAxisIndex: 0,
+                     color: '#ff0000'}
+                ,1: {type: 'bars',
+                     targetAxisIndex: 1,
+                     color: '#0000ff'}}
+      };
+      console.log(options);
+      console.log(JSON.stringify(options));
+
+        // Instantiate and draw our chart, passing in some options.
+        //var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_temp'));
+        chart.draw(data, options);
+      }
+/* ]]> */
+    </script>
 </div>
 
+<div th:fragment="graphWind">
+   <!--Div that will hold the wind chart-->
+   <div id="chart_wind" class="chart"></div>
+
+    <script type="text/javascript">
+/* <![CDATA[ */
+      // Load the Visualization API and the corechart package.
+      //google.charts.load('current', {'packages':['corechart','line']});
+      google.charts.load('current', {'packages':['corechart']});
+      
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+          var jsonData = $.ajax({
+          url: "/chartdata?id=2",
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        // Create the data table.
+        var data = new google.visualization.DataTable(jsonData);
+
+        var formatter = new google.visualization.DateFormat({pattern: 'HH:mm'});
+        formatter.format(data, 0);
+
+        var obj = JSON.parse(jsonData);
+      var options = {
+        hAxis: {
+            format: 'HH',
+            gridlines: {count: 8}
+          },
+        vAxes: {
+          0: {title: 'm/s'}
+        },
+        backgroundColor: '#f1f8e9',
+        seriesType: 'line',
+        series: {0: {type: 'line',
+                     targetAxisIndex: 0,
+                     color: '#cab40d'}
+                 },
+        legend: 'top'
+      };
+      console.log(options);
+      console.log(JSON.stringify(options));
+
+        // Instantiate and draw our chart, passing in some options.
+        //var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_wind'));
+        
+      function placeMarker(dataTable) {
+        var cli = this.getChartLayoutInterface();
+        var chartArea = cli.getChartAreaBoundingBox();
+
+        var icons = [];
+        var rowCount = dataTable.getNumberOfRows();
+
+        //Calculate the width of the icons.
+        var iconWidth = chartArea.width / (rowCount + 1);
+
+        for (i = 0; i < rowCount; i++) {
+          icon = {};
+          //Get the wind value from the DataTable
+          icon.value = dataTable.getValue(i, 2);
+          if (icon.value>0) {
+            //Get the date
+            icon.date = dataTable.getValue(i, 0);
+
+            //CSS style for the icon.
+            icon.style = "position: absolute;"+
+                         "left: "+(cli.getXLocation(icon.date)) + 'px'+";"+
+                         "top: "+(chartArea.top+110) + 'px'+";"+
+                         "width: "+iconWidth + 'px'+";";
+            //Add the icon to the array on scope.
+            icons.push(icon);
+            var elem = document.createElement("img");
+            elem.setAttribute("src", "/wind_dir/arrow_"+Math.floor(icon.value)+".png");
+            elem.setAttribute("height", iconWidth);
+            elem.setAttribute("width", iconWidth);
+            elem.setAttribute("alt", icon.value);
+            elem.setAttribute("style", icon.style);
+            document.getElementById('chart_wind').appendChild(elem);
+          }
+        }
+        
+        console.log(icons);
+      };
+      google.visualization.events.addListener(chart, 'ready',placeMarker.bind(chart, data));
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0,1]); //here you set the columns you want to display
+
+//        chart.draw(data, options);
+        chart.draw(view, options);
+      }
+/* ]]> */
+    </script>
+
+</div>
 </body>
 </html>
