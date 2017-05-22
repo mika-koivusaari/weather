@@ -108,7 +108,7 @@ public class ChartDataController {
 
 		log.debug("Params: "+params);
 		List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
-		response.setIntHeader("max-age", (int)getMaxAge(graph, data));
+		response.setHeader("Cache-Control","max-age="+getMaxAge(graph, data));
     	ChartData chartData = dataToChart(data,graph);
         return chartData;
     }

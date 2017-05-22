@@ -59,7 +59,7 @@ public class WeatherController {
         model.addAttribute("site", site);
         model.addAttribute("messages",messages);
 
-		response.setIntHeader("max-age", 60);
+		response.setHeader("Cache-Control","max-age=60");
 
         return "weather";
     }
