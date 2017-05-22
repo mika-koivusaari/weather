@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.koivusaari.weather.DataMapper;
 import org.koivusaari.weather.SensorRepository;
 import org.koivusaari.weather.pojo.ChartRow;
@@ -75,11 +77,12 @@ public class ChartDataController {
 
 	@CrossOrigin
 	@RequestMapping("/chartdata")
-    public Object index(@RequestParam(value="id") String graphId) {
+    public Object index(@RequestParam(value="id") String graphId, HttpServletResponse response) {
     	        
 		log.info("Params:");
 		log.info("graphId: "+graphId);
-
+		log.info("Response: "+response);
+		
 		Graph graph=graphRepository.findOne(Long.parseLong(graphId));
 
 		log.info("Querying data for today:");
@@ -105,10 +108,36 @@ public class ChartDataController {
 
 		log.debug("Params: "+params);
 		List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
+		response.setIntHeader("max-age", (int)getMaxAge(graph, data));
     	ChartData chartData = dataToChart(data,graph);
         return chartData;
     }
 
+	protected long getMaxAge(Graph graph, List<ChartRow> data){
+		String trunc=getSmallestTrunc(graph);
+		log.debug("trunc="+trunc);
+		
+		ChartRow row=data.get(data.size()-1);
+		LocalDateTime lastData=LocalDateTime.ofInstant(row.getTime().toInstant(), ZoneId.systemDefault());
+		log.debug("lastData="+lastData);
+		
+		Pattern groupByPattern = Pattern.compile("(\\d*) ?(\\D+)"); //numbers as groups  
+		Matcher m=groupByPattern.matcher(trunc);
+		log.debug("match found="+m.matches());
+		String amount=m.group(1);
+		if (amount.equals("")){
+		  	amount="1";
+		}
+		String unit=m.group(2);
+		Duration duration=Duration.of(Long.parseLong(amount), ChronoUnit.valueOf(unit));
+		
+		LocalDateTime cacheEnd=lastData.plus(duration);
+		log.debug("cacheEnd="+cacheEnd);
+		Duration maxAge=Duration.between(LocalDateTime.now(), cacheEnd);
+		log.debug("duration="+maxAge+" maxAge="+maxAge.getSeconds());
+		return maxAge.getSeconds();
+	}
+	
 	protected ChartData dataToChart(List<ChartRow> data, Graph graph) {
 		ChartData chartData=new ChartData();
         ArrayList<ChartCol> chartCols = createCols(data, graph);

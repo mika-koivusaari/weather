@@ -2,6 +2,8 @@ package org.koivusaari.weather;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.koivusaari.weather.pojo.Message;
 import org.koivusaari.weather.pojo.WeatherData;
 import org.slf4j.Logger;
@@ -33,7 +35,7 @@ public class WeatherController {
 	}
 
 	@RequestMapping("/weather")
-    public String createGraph(Model model) {
+    public String createGraph(Model model, HttpServletResponse response) {
 		WeatherData weatherData=weatherRepository.findLastData();
 		log.debug("WeatherData: "+weatherData);
 		List<Message> messages=messageRepository.findCurrentMessages();
@@ -56,6 +58,8 @@ public class WeatherController {
         model.addAttribute("analId", analId);
         model.addAttribute("site", site);
         model.addAttribute("messages",messages);
+
+		response.setIntHeader("max-age", 60);
 
         return "weather";
     }
