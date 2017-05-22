@@ -197,7 +197,7 @@ public class ChartDataController {
 		String defaultTrunc=getSmallestTrunc(graph);
 		
 		select="SELECT time_series";
-		from  ="  FROM generate_series("+getTruncFunction(defaultTrunc, ":from::timestamp")+", :to::timestamp, '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
+		from  ="  FROM generate_series("+getTruncFunction(defaultTrunc, ":from::timestamp")+", "+getTruncFunction(defaultTrunc, ":to::timestamp")+", '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
 		int i=0;
 		for (GraphSeries gs:graph.getGraphSeries()){
 			Series series=gs.getSeries();
@@ -211,7 +211,7 @@ public class ChartDataController {
 				if (trunc=="1 MINUTES"){
 				    from  =from  +"       LEFT JOIN (select time as time, value as value from data where sensorid=:"+i+" and time between :from::timestamp and :to::timestamp) d"+i+" ON time_series = d"+i+".time\n";
 				} else {
-				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time, "+(series.getGroupby()==null?"value":series.getGroupby())+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and :to::timestamp group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
+				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time, "+(series.getGroupby()==null?"value":series.getGroupby())+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and "+getTruncFunction(defaultTrunc, ":to::timestamp")+" group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
 				}
 				params.put(Integer.toString(i), series.getSensorid());
 			} else {
