@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>Insert title here</title>
+</head>
+<body>
+
+<div th:fragment="lastNews">
+    <h3>Uutiset:</h3>
+    <div class="news" th:each="p : ${posts}">
+      <a th:href="${p.link}">
+      <span th:text="${p.title}">title</span><br/>
+      <span th:text="*{p.modified != null} ? ${#temporals.format(p.modified, 'dd.MM.yyyy HH:mm')} : ''">Modified</span>
+      </a>
+    </div>
+</div>
+</body>
+</html>

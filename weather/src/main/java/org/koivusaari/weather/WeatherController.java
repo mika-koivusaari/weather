@@ -72,6 +72,22 @@ public class WeatherController {
 			messages.add(m);
 		}
 		
+		ArrayList<WpPost> postList = getLastPosts();
+
+        model.addAttribute("posts", postList);
+
+        model.addAttribute("weatherdata", weatherData);
+        model.addAttribute("analId", analId);
+        model.addAttribute("site", site);
+        model.addAttribute("messages",messages);
+
+		response.setHeader("Cache-Control","max-age=60");
+
+        return "weather";
+    }
+
+	protected ArrayList<WpPost> getLastPosts() {
+		ArrayList<WpPost> postList=new ArrayList<WpPost>(); 
 		try {
 			String url="https://weather.khyron.dy.fi/wp/wp-json/wp/v2/posts?context=view&per_page=3";
 			URLConnection connection = new URL(url).openConnection();
@@ -91,7 +107,6 @@ public class WeatherController {
 			Collection<Post> posts = g.fromJson(responseBody, collectionType);
 			
 //			WpPost post = g.fromJson(responseBody, WpPost.class);
-			ArrayList<WpPost> postList=new ArrayList<WpPost>(); 
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 			for (Post post:posts){
 			    log.debug(post.getTitle().getRendered());
@@ -100,7 +115,6 @@ public class WeatherController {
 				LocalDateTime modified = LocalDateTime.parse(post.getDate(), formatter);
 			    postList.add(new WpPost(modified,post.getLink(),post.getTitle().getRendered()));
 			}
-	        model.addAttribute("posts", postList);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -108,15 +122,7 @@ public class WeatherController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-        model.addAttribute("weatherdata", weatherData);
-        model.addAttribute("analId", analId);
-        model.addAttribute("site", site);
-        model.addAttribute("messages",messages);
-
-		response.setHeader("Cache-Control","max-age=60");
-
-        return "weather";
-    }
+		return postList;
+	}
 
 }

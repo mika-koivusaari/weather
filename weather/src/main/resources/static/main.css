@@ -58,6 +58,10 @@ td.unit {
     border-width: thin;
 }
 
+.news {
+	margin-bottom: 0.5em;
+}
+
 table.messages {
 	margin-bottom: 1em;
     margin-top: 1em;
