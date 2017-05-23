@@ -36,6 +36,19 @@
     <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
   </div>
   
+  <table class="messages">
+    <tr>
+      <th>Title</th>
+      <th>Modified</th>
+      <th>Link</th>
+    </tr>
+    <tr th:each="p : ${posts}">
+      <td th:text="${p.title}">title</td>
+      <td th:text="*{p.modified != null} ? ${#temporals.format(p.modified, 'dd.MM.yyyy HH:mm')} : ''">Modified</td>
+      <td th:text="${p.link}">link</td>
+    </tr>
+  </table>
+  
   <div class="container">
 
     <div th:replace="fragments/menu :: leftMenu">

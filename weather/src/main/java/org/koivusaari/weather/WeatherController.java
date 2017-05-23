@@ -1,11 +1,24 @@
 package org.koivusaari.weather;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.koivusaari.weather.pojo.Message;
 import org.koivusaari.weather.pojo.WeatherData;
+import org.koivusaari.weather.pojo.WpPost;
+import org.koivusaari.weather.pojo.wp.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +27,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.thymeleaf.templateresolver.TemplateResolver;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 
 @Controller
 public class WeatherController {
@@ -52,6 +70,43 @@ public class WeatherController {
 			m.setAuthor("WeatherController");
 			m.setMessage("Data puutteellista");
 			messages.add(m);
+		}
+		
+		try {
+			String url="https://weather.khyron.dy.fi/wp/wp-json/wp/v2/posts?context=view&per_page=3";
+			URLConnection connection = new URL(url).openConnection();
+			InputStream resp = connection.getInputStream();
+	
+			String responseBody;
+			try (Scanner scanner = new Scanner(resp)) {
+			    responseBody = scanner.useDelimiter("\\A").next();
+			    log.debug(responseBody);
+			}
+
+//			Gson g = new Gson();
+			Gson g = new GsonBuilder()
+			           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+			           .create();
+			Type collectionType = new TypeToken<Collection<Post>>(){}.getType();
+			Collection<Post> posts = g.fromJson(responseBody, collectionType);
+			
+//			WpPost post = g.fromJson(responseBody, WpPost.class);
+			ArrayList<WpPost> postList=new ArrayList<WpPost>(); 
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+			for (Post post:posts){
+			    log.debug(post.getTitle().getRendered());
+			    log.debug(post.getDate());
+			    log.debug(post.getLink());
+				LocalDateTime modified = LocalDateTime.parse(post.getDate(), formatter);
+			    postList.add(new WpPost(modified,post.getLink(),post.getTitle().getRendered()));
+			}
+	        model.addAttribute("posts", postList);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
         model.addAttribute("weatherdata", weatherData);
