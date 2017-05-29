@@ -40,20 +40,19 @@ public class WeatherController {
 	private String analId;
 	@Value("${weather.site:#{null}}")
 	private String site;
-	@Value("${wp.url:#{null}}")
-	private String wpUrl;
-	@Value("${wp.posts:#{3}}")
-	private int wpPosts;
-	
+
+	private WPIntegration wpIntegration;
 	private WeatherRepository weatherRepository;
 	private MessageRepository messageRepository;
 	private static final Logger log = LoggerFactory.getLogger(WeatherController.class);
 	
 	public WeatherController(WeatherRepository weatherRepository
-			                ,MessageRepository messageRepository) {
+			                ,MessageRepository messageRepository
+			                ,WPIntegration wpIntegration) {
 		super();
 		this.weatherRepository = weatherRepository;
 		this.messageRepository = messageRepository;
+		this.wpIntegration = wpIntegration;
 	}
 
 	@RequestMapping("/weather")
@@ -76,11 +75,7 @@ public class WeatherController {
 			messages.add(m);
 		}
 		
-		if (wpUrl!=null) {
-    		ArrayList<WpPost> postList = getLastPosts(wpUrl,wpPosts);
-
-            model.addAttribute("posts", postList);
-		}
+        model.addAttribute("posts", wpIntegration.getLastPosts());
 
         model.addAttribute("weatherdata", weatherData);
         model.addAttribute("analId", analId);
@@ -92,43 +87,5 @@ public class WeatherController {
         return "weather";
     }
 
-	protected ArrayList<WpPost> getLastPosts(String wpUrl, int numPosts) {
-		ArrayList<WpPost> postList=new ArrayList<WpPost>(); 
-		try {
-			String url=wpUrl+"wp-json/wp/v2/posts?context=view&per_page="+Integer.toString(numPosts);
-			URLConnection connection = new URL(url).openConnection();
-			InputStream resp = connection.getInputStream();
-	
-			String responseBody;
-			try (Scanner scanner = new Scanner(resp)) {
-			    responseBody = scanner.useDelimiter("\\A").next();
-			    log.debug(responseBody);
-			}
-
-//			Gson g = new Gson();
-			Gson g = new GsonBuilder()
-			           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-			           .create();
-			Type collectionType = new TypeToken<Collection<Post>>(){}.getType();
-			Collection<Post> posts = g.fromJson(responseBody, collectionType);
-			
-//			WpPost post = g.fromJson(responseBody, WpPost.class);
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-			for (Post post:posts){
-			    log.debug(post.getTitle().getRendered());
-			    log.debug(post.getDate());
-			    log.debug(post.getLink());
-				LocalDateTime modified = LocalDateTime.parse(post.getDate(), formatter);
-			    postList.add(new WpPost(modified,post.getLink(),post.getTitle().getRendered()));
-			}
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return postList;
-	}
 
 }
