@@ -61,14 +61,12 @@ public class WPIntegration {
 			    log.debug(responseBody);
 			}
 
-//			Gson g = new Gson();
 			Gson g = new GsonBuilder()
 			           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 			           .create();
 			Type collectionType = new TypeToken<Collection<Post>>(){}.getType();
 			Collection<Post> posts = g.fromJson(responseBody, collectionType);
 			
-//			WpPost post = g.fromJson(responseBody, WpPost.class);
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 			for (Post post:posts){
 			    log.debug(post.getTitle().getRendered());
