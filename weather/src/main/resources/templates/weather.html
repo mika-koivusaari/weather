@@ -16,9 +16,11 @@
 </head>
 <body>
 
+  <header>
     <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
     </script>
 
+  
     <div class="site center" th:if="${site!=null}" th:inline="text">
         [[${site}]]
     </div>
@@ -27,28 +29,19 @@
         Sääasema Rauma, Lappi, Kivikylä
     </h1>
 
-  <div th:replace="fragments/messages :: currentMessages">
-    Viestit
-  </div>
+    <div th:replace="fragments/messages :: currentMessages">
+      Viestit
+    </div>
+  </header>
 
     
-  <div class="container">
+  <div class="body">
 
-    <div class="menu" >
-    <div th:replace="fragments/menu :: leftMenu">
-      Menu
-    </div>
-
-    <div th:replace="fragments/news :: lastNews">
-      Uutiset:
-    </div>
-    </div>
-
-    <div class="center">
-  <div class="page-updated">
-    <span>Sivu päivitetty:</span>
-    <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
-  </div>
+    <main class="content center">
+      <div class="page-updated">
+        <span>Sivu päivitetty:</span>
+        <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
+      </div>
       <div class="container">
         <div>
           <div th:replace="fragments/basicWeatherData :: basicTemperature">
@@ -69,9 +62,23 @@
         <div th:replace="fragments/graph :: graphWind">
         </div>
       </div>
-    </div>
+    </main>
+
+    <nav class="nav" >
+      <div th:replace="fragments/menu :: leftMenu">
+        Menu
+      </div>
+
+      <div th:replace="fragments/news :: lastNews">
+        Uutiset:
+      </div>
+    </nav>
 
   </div>
+
+  <footer th:replace="fragments/footer :: footer">
+    footer
+  </footer>
 
 
 </body>

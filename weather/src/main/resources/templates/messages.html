@@ -8,6 +8,7 @@
 </head>
 <body>
 
+  <header>
     <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
     </script>
 
@@ -18,10 +19,18 @@
     <h1>
         Sääasema Rauma, Lappi, Kivikylä
     </h1>
-    
-  <div class="container">
+  </header>
 
-    <div class="menu" >
+  <div class="body">
+
+    <main class="content center">
+
+      <div th:replace="fragments/messages :: currentMessages">
+        Viestit
+      </div>
+    </main>
+
+    <nav class="nav" >
       <div th:replace="fragments/menu :: leftMenu">
         Menu
       </div>
@@ -29,16 +38,13 @@
       <div th:replace="fragments/news :: lastNews">
         Uutiset:
       </div>
-    </div>
-
-    <div class="center">
-      <div th:replace="fragments/messages :: currentMessages">
-        Viestit
-      </div>
-    </div>
+    </nav>
 
   </div>
 
+  <footer th:replace="fragments/footer :: footer">
+    footer
+  </footer>
 
 </body>
 </html>

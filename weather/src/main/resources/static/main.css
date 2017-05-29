@@ -2,6 +2,11 @@
 
 body {
 	background-color: #e0f7fa;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    margin-bottom: 0;
+    margin-top: 0px;
 }
 
 .site {
@@ -29,8 +34,10 @@ td.unit {
 }
 
 .center {
-    margin: auto;
-    width: 50%;
+/*     margin: auto; */
+    margin-right: auto;
+    margin-left: auto;
+/*     width: 50%; */
 }
 
 .data {
@@ -119,4 +126,26 @@ div {
 .container {
 	display:flex;
 	margin: 0.1em;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+}
+
+.nav {
+  /* put the nav on the left */
+  order: -1;
+  flex: 0 0 12em;
+}
+
+.content {
+  flex: 1;
+  padding-left: 0.5em;
+}
+.footer {
+	margin: 1em;
+    background-color: #80DEEA;
+    text-align: center;
+    border-radius: 0.3em;
 }

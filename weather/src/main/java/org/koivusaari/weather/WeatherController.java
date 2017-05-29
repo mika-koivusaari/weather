@@ -42,6 +42,8 @@ public class WeatherController {
 	private String analId;
 	@Value("${weather.site:#{null}}")
 	private String site;
+	
+	private String version;
 
 	private WPIntegration wpIntegration;
 	private WeatherRepository weatherRepository;
@@ -84,10 +86,21 @@ public class WeatherController {
         model.addAttribute("site", site);
         model.addAttribute("messages",messages);
 
-		response.setHeader("Cache-Control","max-age=60");
+        setVersion(model);
+        
+
+        response.setHeader("Cache-Control","max-age=60");
 
         return "weather";
     }
+
+	protected void setVersion(Model model) {
+		version=getClass().getPackage().getImplementationVersion();
+        if (version==null) {
+        	version="***";
+        }
+        model.addAttribute("version", version);
+	}
 
 	@RequestMapping("/messages")
     public String messages(Model model, HttpServletResponse response) {
@@ -99,6 +112,8 @@ public class WeatherController {
         model.addAttribute("messages",messages);
 
         model.addAttribute("posts", wpIntegration.getLastPosts());
+
+        setVersion(model);
 
         response.setHeader("Cache-Control","max-age=60");
 
