@@ -6,3 +6,6 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 logging.level.org.koivusaari.weather: DEBUG
 
 #google.analytics.id=***
+
+wp.url=https://weather.khyron.dy.fi/wp/
+wp.posts=3

@@ -40,6 +40,10 @@ public class WeatherController {
 	private String analId;
 	@Value("${weather.site:#{null}}")
 	private String site;
+	@Value("${wp.url:#{null}}")
+	private String wpUrl;
+	@Value("${wp.posts:#{3}}")
+	private int wpPosts;
 	
 	private WeatherRepository weatherRepository;
 	private MessageRepository messageRepository;
@@ -72,9 +76,11 @@ public class WeatherController {
 			messages.add(m);
 		}
 		
-		ArrayList<WpPost> postList = getLastPosts();
+		if (wpUrl!=null) {
+    		ArrayList<WpPost> postList = getLastPosts(wpUrl,wpPosts);
 
-        model.addAttribute("posts", postList);
+            model.addAttribute("posts", postList);
+		}
 
         model.addAttribute("weatherdata", weatherData);
         model.addAttribute("analId", analId);
@@ -86,10 +92,10 @@ public class WeatherController {
         return "weather";
     }
 
-	protected ArrayList<WpPost> getLastPosts() {
+	protected ArrayList<WpPost> getLastPosts(String wpUrl, int numPosts) {
 		ArrayList<WpPost> postList=new ArrayList<WpPost>(); 
 		try {
-			String url="https://weather.khyron.dy.fi/wp/wp-json/wp/v2/posts?context=view&per_page=3";
+			String url=wpUrl+"wp-json/wp/v2/posts?context=view&per_page="+Integer.toString(numPosts);
 			URLConnection connection = new URL(url).openConnection();
 			InputStream resp = connection.getInputStream();
 	

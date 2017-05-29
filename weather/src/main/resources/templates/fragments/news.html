@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div th:fragment="lastNews">
+<div th:if="${not #lists.isEmpty(posts)}" th:fragment="lastNews">
     <h3>Uutiset:</h3>
     <div class="news" th:each="p : ${posts}">
       <a th:href="${p.link}">
