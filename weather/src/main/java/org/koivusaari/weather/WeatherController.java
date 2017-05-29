@@ -90,7 +90,7 @@ public class WeatherController {
 	@RequestMapping("/messages")
     public String messages(Model model, HttpServletResponse response) {
 
-		Iterable<Message> messages=messageRepository.findAllByOrderByFromAsc();
+		Iterable<Message> messages=messageRepository.findAllByOrderByFromDesc();
 
         model.addAttribute("analId", analId);
         model.addAttribute("site", site);

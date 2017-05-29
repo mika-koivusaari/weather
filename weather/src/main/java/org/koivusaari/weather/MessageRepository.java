@@ -12,5 +12,5 @@ public interface MessageRepository extends CrudRepository<Message,Long>{
 	@Query("SELECT m FROM Message m WHERE m.to IS NULL OR localtimestamp BETWEEN m.from AND m.to ORDER BY m.from ASC")
 	public List<Message> findCurrentMessages();
 	
-	public List<Message> findAllByOrderByFromAsc();
+	public List<Message> findAllByOrderByFromDesc();
 }
