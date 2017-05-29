@@ -62,6 +62,23 @@ td.unit {
 	margin-bottom: 0.5em;
 }
 
+.news_header {
+	text-decoration: none;
+    color: black;
+}
+
+.news_link {
+	text-decoration: none;
+}
+
+.news_title {
+	color: black;
+}
+
+.news_time {
+	color: gray;
+}
+
 table.messages {
 	margin-bottom: 1em;
     margin-top: 1em;

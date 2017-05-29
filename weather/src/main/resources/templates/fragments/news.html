@@ -7,11 +7,11 @@
 <body>
 
 <div th:if="${not #lists.isEmpty(posts)}" th:fragment="lastNews">
-    <h3>Uutiset:</h3>
+    <a class="news_header" href="http://weather.khyron.dy.fi/wp/blog/"><h3 class="news_header">Uutiset:</h3></a>
     <div class="news" th:each="p : ${posts}">
-      <a th:href="${p.link}">
-      <span th:text="${p.title}">title</span><br/>
-      <span th:text="*{p.modified != null} ? ${#temporals.format(p.modified, 'dd.MM.yyyy HH:mm')} : ''">Modified</span>
+      <a class="news_link" th:href="${p.link}">
+      <span class="news_title" th:text="${p.title}">title</span><br/>
+      <span class="news_time" th:text="*{p.modified != null} ? ${#temporals.format(p.modified, 'dd.MM.yyyy HH:mm')} : ''">Modified</span>
       </a>
     </div>
 </div>
