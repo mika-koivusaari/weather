@@ -87,5 +87,19 @@ public class WeatherController {
         return "weather";
     }
 
+	@RequestMapping("/messages")
+    public String messages(Model model, HttpServletResponse response) {
 
+		Iterable<Message> messages=messageRepository.findAllByOrderByFromAsc();
+
+        model.addAttribute("analId", analId);
+        model.addAttribute("site", site);
+        model.addAttribute("messages",messages);
+
+        model.addAttribute("posts", wpIntegration.getLastPosts());
+
+        response.setHeader("Cache-Control","max-age=60");
+
+        return "messages";
+	}
 }

@@ -83,9 +83,25 @@ table.messages {
 	margin-bottom: 1em;
     margin-top: 1em;
     width: 100%;
+    border-collapse: collapse;
 }
+.message_row:nth-child(odd) {
+	background-color: #c0e7ec;
+}
+
 th.messages {
 	text-align: center;
+}
+
+.message_time {
+	white-space: nowrap;
+}
+
+.message_header {
+	background: linear-gradient(#00BCD4, #80DEEA);
+    border-style: solid;
+    border-color: #00BCD4;
+    border-radius: 0.3em;
 }
 
 .chart {

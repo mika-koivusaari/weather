@@ -6,17 +6,17 @@
 </head>
 <body>
 
-<div th:if="${not #lists.isEmpty(messages)}" class="center" th:fragment="currentMessages">
+<div th:if="${not #lists.isEmpty(messages)}" th:fragment="currentMessages">
   <table class="messages">
-    <tr>
-      <th>Tila</th>
-      <th>Alkoi</th>
-      <th>Loppui</th>
+    <tr class="message_header">
+      <th class="messages">Tila</th>
+      <th class="messages">Alkoi</th>
+      <th class="messages">Loppui</th>
     </tr>
-    <tr th:each="m : ${messages}">
+    <tr class="message_row" th:each="m : ${messages}">
       <td th:text="${m.message}">Message</td>
-      <td th:text="*{m.from != null} ? ${#temporals.format(m.from, 'dd.MM.yyyy HH:mm')} : ''">From</td>
-      <td th:text="*{m.to != null} ? ${#temporals.format(m.to, 'dd.MM.yyyy HH:mm')} : ''">To</td>
+      <td class="message_time" th:text="*{m.from != null} ? ${#temporals.format(m.from, 'dd.MM.yyyy HH:mm')} : ''">From</td>
+      <td class="message_time" th:text="*{m.to != null} ? ${#temporals.format(m.to, 'dd.MM.yyyy HH:mm')} : ''">To</td>
     </tr>
   </table>
 </div>

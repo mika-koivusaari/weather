@@ -31,12 +31,7 @@
     Viestit
   </div>
 
-  <div class="page-updated">
-    <span>Sivu päivitetty:</span>
-    <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
-  </div>
-  
-  
+    
   <div class="container">
 
     <div class="menu" >
@@ -50,6 +45,10 @@
     </div>
 
     <div class="center">
+  <div class="page-updated">
+    <span>Sivu päivitetty:</span>
+    <span class="no-wrap" th:text="*{weatherdata.time != null} ? ${#temporals.format(weatherdata.time, 'dd.MM.yyyy HH:mm')} : ''">1.1.2017 12:00</span>
+  </div>
       <div class="container">
         <div>
           <div th:replace="fragments/basicWeatherData :: basicTemperature">
