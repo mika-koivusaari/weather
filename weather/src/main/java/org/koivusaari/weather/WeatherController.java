@@ -19,6 +19,8 @@ import org.koivusaari.weather.pojo.Message;
 import org.koivusaari.weather.pojo.WeatherData;
 import org.koivusaari.weather.pojo.WpPost;
 import org.koivusaari.weather.pojo.wp.Post;
+import org.koivusaari.weather.repositories.MessageRepository;
+import org.koivusaari.weather.repositories.WeatherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

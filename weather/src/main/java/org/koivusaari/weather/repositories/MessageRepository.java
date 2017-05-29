@@ -1,4 +1,4 @@
-package org.koivusaari.weather;
+package org.koivusaari.weather.repositories;
 
 import java.util.List;
 

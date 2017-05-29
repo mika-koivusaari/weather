@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
 
 import org.koivusaari.weather.DataMapper;
-import org.koivusaari.weather.SensorRepository;
 import org.koivusaari.weather.pojo.ChartRow;
 import org.koivusaari.weather.pojo.Graph;
 import org.koivusaari.weather.pojo.GraphDataSeries;
@@ -30,6 +29,9 @@ import org.koivusaari.weather.pojo.googlecharts.ChartC;
 import org.koivusaari.weather.pojo.googlecharts.ChartCol;
 import org.koivusaari.weather.pojo.googlecharts.ChartData;
 import org.koivusaari.weather.pojo.googlecharts.ChartV;
+import org.koivusaari.weather.repositories.GraphDataSeriesRepository;
+import org.koivusaari.weather.repositories.GraphRepository;
+import org.koivusaari.weather.repositories.SensorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package org.koivusaari.weather;
+package org.koivusaari.weather.repositories;
 
 import org.koivusaari.weather.pojo.Sensors;
 import org.springframework.data.repository.CrudRepository;

@@ -1,4 +1,4 @@
-package org.koivusaari.weather;
+package org.koivusaari.weather.repositories;
 
 import static org.mockito.Mockito.when;
 
@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.koivusaari.weather.pojo.WeatherData;
+import org.koivusaari.weather.repositories.WeatherDataExtractor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

@@ -1,6 +1,6 @@
 package org.koivusaari.weather.pojo;
 
-import org.koivusaari.weather.WeatherDataExtractor;
+import org.koivusaari.weather.repositories.WeatherDataExtractor;
 import org.mockito.MockitoAnnotations;
 
 import junit.framework.TestCase;

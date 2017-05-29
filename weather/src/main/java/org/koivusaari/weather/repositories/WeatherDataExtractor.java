@@ -1,4 +1,4 @@
-package org.koivusaari.weather;
+package org.koivusaari.weather.repositories;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
