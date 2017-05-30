@@ -98,17 +98,17 @@
     <tbody>
       <tr>
         <th>Lämpötila:</th>
-        <td th:text="*{weatherdata.temperature != null} ? ${#numbers.formatDecimal(weatherdata.temperature,1,1)} : ''">10</td>
+        <td id="temperature" th:text="*{weatherdata.temperature != null} ? ${#numbers.formatDecimal(weatherdata.temperature,1,1)} : ''">10</td>
         <td class="unit">&deg;C</td>
       </tr>
       <tr>
         <th>Tuntuu kuin:</th>
-        <td th:text="*{weatherdata.temperatureFeelsLike != null} ? ${#numbers.formatDecimal(weatherdata.temperatureFeelsLike,1,1)} : ''">5</td>
+        <td id="temperatureFeelsLike" th:text="*{weatherdata.temperatureFeelsLike != null} ? ${#numbers.formatDecimal(weatherdata.temperatureFeelsLike,1,1)} : ''">5</td>
         <td class="unit">&deg;C</td>
       </tr>
       <tr>
         <th>Ilmanpaine:</th>
-        <td th:text="*{weatherdata.airPressure != null} ? ${#numbers.formatDecimal(weatherdata.airPressure,1,1)} : ''">1000</td>
+        <td id="airPressure" th:text="*{weatherdata.airPressure != null} ? ${#numbers.formatDecimal(weatherdata.airPressure,1,1)} : ''">1000</td>
         <td class="unit">hPa</td>
       </tr>
     </tbody>
@@ -121,17 +121,17 @@
     <tbody>
       <tr>
         <th>Sade 10 min:</th>
-        <td th:text="*{weatherdata.rain10 != null} ? ${#numbers.formatDecimal(weatherdata.rain10,1,1)} : ''">10</td>
+        <td id="rain10" th:text="*{weatherdata.rain10 != null} ? ${#numbers.formatDecimal(weatherdata.rain10,1,1)} : ''">10</td>
         <td class="unit">mm</td>
       </tr>
       <tr>
         <th>Sade 60 min:</th>
-        <td th:text="*{weatherdata.rain60 != null} ? ${#numbers.formatDecimal(weatherdata.rain60,1,1)} : ''">60</td>
+        <td id="rain60" th:text="*{weatherdata.rain60 != null} ? ${#numbers.formatDecimal(weatherdata.rain60,1,1)} : ''">60</td>
         <td class="unit">mm</td>
       </tr>
       <tr>
         <th>Sade tänään:</th>
-        <td th:text="*{weatherdata.rainToday != null} ? ${#numbers.formatDecimal(weatherdata.rainToday,1,1)} : ''">24h</td>
+        <td id="rainToday" th:text="*{weatherdata.rainToday != null} ? ${#numbers.formatDecimal(weatherdata.rainToday,1,1)} : ''">24h</td>
         <td class="unit">mm</td>
       </tr>
     </tbody>
@@ -144,12 +144,12 @@
     <tbody>
       <tr>
         <th>Tuuli:</th>
-        <td th:text="*{weatherdata.windSpeed != null} ? ${#numbers.formatDecimal(weatherdata.windSpeed,1,1)} : ''">4</td>
+        <td id="windSpeed" th:text="*{weatherdata.windSpeed != null} ? ${#numbers.formatDecimal(weatherdata.windSpeed,1,1)} : ''">4</td>
         <td class="unit">m/s</td>
       </tr>
       <tr>
         <th>Tuulen suunta:</th>
-        <td><img th:if="*{weatherdata.windDirection != null and weatherdata.windSpeed != null and #numbers.formatDecimal(weatherdata.windSpeed,1,1)!='0.0'}" th:src="${'/wind_dir/arrow_' + #numbers.formatInteger(weatherdata.windDirection, 0) + '.png'}"/></td>
+        <td><img id="windDirection" th:if="*{weatherdata.windDirection != null and weatherdata.windSpeed != null and #numbers.formatDecimal(weatherdata.windSpeed,1,1)!='0.0'}" th:src="${'/wind_dir/arrow_' + #numbers.formatInteger(weatherdata.windDirection, 0) + '.png'}"/></td>
       </tr>
     </tbody>
   </table>

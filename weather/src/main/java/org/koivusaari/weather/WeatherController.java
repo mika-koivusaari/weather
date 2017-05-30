@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.google.gson.Gson;
@@ -92,6 +93,16 @@ public class WeatherController {
         response.setHeader("Cache-Control","max-age=60");
 
         return "weather";
+    }
+
+	@RequestMapping("/weatherdata")
+    public @ResponseBody WeatherData getCurretnData(HttpServletResponse response) {
+		WeatherData weatherData=weatherRepository.findLastData();
+		log.debug("WeatherData: "+weatherData);
+
+        response.setHeader("Cache-Control","max-age=60");
+
+        return weatherData;
     }
 
 	protected void setVersion(Model model) {

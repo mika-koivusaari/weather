@@ -5,6 +5,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import org.koivusaari.weather.CustomDateSerializer;
+import org.koivusaari.weather.NewDateSerializer;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * @author mik
  * 
@@ -23,6 +30,8 @@ public class WeatherData {
 	private Float rainToday; //Last 60 minutes
 	private Float windSpeed; //Last 10 min average
 	private Float windDirection; //Last 10 min average
+
+	@JsonFormat(pattern="dd.MM.yyyy HH:mm")
 	public LocalDateTime getTime() {
 		return time;
 	}
