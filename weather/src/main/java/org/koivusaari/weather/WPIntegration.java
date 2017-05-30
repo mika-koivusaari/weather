@@ -31,7 +31,7 @@ public class WPIntegration {
 	@Value("${wp.posts:#{3}}")
 	private int wpPosts;
 
-	private static final Logger log = LoggerFactory.getLogger(WeatherController.class);
+	private static final Logger log = LoggerFactory.getLogger(WPIntegration.class);
 
 	private ArrayList<WpPost> lastPosts;
 	
