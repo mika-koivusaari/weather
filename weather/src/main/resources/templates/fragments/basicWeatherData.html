@@ -92,6 +92,38 @@
   </table>
 </div>
 
+<script type="text/javascript" th:fragment="basicAutoUpdate">
+/* <![CDATA[ */
+  
+      function updateWeather() {
+
+          var jsonData = $.ajax({
+          url: "/weatherdata",
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        var obj = JSON.parse(jsonData);
+
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            console.log(key+" -> " +obj[key]);
+            var element=document.getElementById(key);
+            if (element!=null) {
+              element.innerHTML=obj[key].toFixed(1);
+            }
+          }
+        }
+        document.getElementById("updateTime").innerHTML = obj["time"];
+        if (obj["windDirection"]!=null && obj["windSpeed"]>0.1) {
+          document.getElementById("windDirection").src="/wind_dir/arrow_" + obj["windDirection"].toFixed(0) + ".png";
+        }
+      }
+      
+      addFunction(updateWeather,1);
+/* ]]> */
+</script>
+
 <div th:fragment="basicTemperature">
   <table class="data">
     <caption>Lämpötila</caption>
