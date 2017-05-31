@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
@@ -113,6 +114,60 @@ public class ChartDataController {
 		response.setHeader("Cache-Control","max-age="+getMaxAge(graph, data));
     	ChartData chartData = dataToChart(data,graph);
         return chartData;
+    }
+
+	@CrossOrigin
+	@RequestMapping("/chartdataupdate")
+    public Object chartDataUpdate(@RequestParam(value="id") String graphId
+    		                     ,@RequestParam(value="from") String updateFrom
+    		                     ,HttpServletResponse response) {
+    	        
+		log.debug("Params:");
+		log.debug("graphId: "+graphId);
+		log.debug("from: "+updateFrom);
+		log.debug("Response: "+response);
+		
+		Graph graph=graphRepository.findOne(Long.parseLong(graphId));
+
+		HashMap<String,Object> params=new HashMap<String,Object>();
+		String sql=createSelect(graph,params);
+		log.debug("select:\n"+sql);
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+		LocalDateTime from = LocalDateTime.parse(updateFrom, formatter);
+		LocalDateTime to=LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+
+		params.put("from", Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
+		params.put("to", Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
+
+		log.debug("Params: "+params);
+		List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
+		response.setHeader("Cache-Control","max-age="+getMaxAge(graph, data));
+//    	ChartData chartData = dataToChart(data,graph);
+//		protected ChartData dataToChart(List<ChartRow> data, Graph graph) {
+//			ChartData chartData=new ChartData();
+//	        ArrayList<ChartCol> chartCols = createCols(data, graph);
+//	        chartData.setCols(chartCols);
+	        
+	        ArrayList chartrows=new ArrayList();
+	        for (ChartRow row:data){
+	        	ArrayList<ChartV> list=new ArrayList<ChartV>();
+	        	list.add(new ChartV(row.getTime()));
+	        	for (Float value:row.getData()){
+	        		list.add(new ChartV(value));
+	        	}
+//	        	ChartC c=new ChartC();
+//	        	c.setC(list);
+//	        	chartrows.add(c);
+	        	chartrows.add(list);
+	        }
+	        return chartrows;
+//	        chartData.setRows(chartrows);
+
+//	        return chartData;
+//		}
+
+//		return chartData;
     }
 
 	protected long getMaxAge(Graph graph, List<ChartRow> data){

@@ -107,7 +107,7 @@
 
         for (var key in obj) {
           if (obj.hasOwnProperty(key)) {
-            console.log(key+" -> " +obj[key]);
+//            console.log(key+" -> " +obj[key]);
             var element=document.getElementById(key);
             if (element!=null) {
               element.innerHTML=obj[key].toFixed(1);

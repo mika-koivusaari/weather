@@ -11,6 +11,10 @@
    <div id="chart_temp" class="chart"></div>
     <script type="text/javascript">
 /* <![CDATA[ */
+      var temp_rain_data;
+      var temp_rain_chart;
+      var temp_rain_options;
+      
       // Load the Visualization API and the corechart package.
       //google.charts.load('current', {'packages':['corechart','line']});
       google.charts.load('current', {'packages':['corechart']});
@@ -30,13 +34,13 @@
           }).responseText;
      
         // Create the data table.
-        var data = new google.visualization.DataTable(jsonData);
+        temp_rain_data = new google.visualization.DataTable(jsonData);
 
         var formatter = new google.visualization.DateFormat({pattern: 'HH:mm'});
-        formatter.format(data, 0);
+        formatter.format(temp_rain_data, 0);
 
-        var obj = JSON.parse(jsonData);
-      var options = {
+//        var obj = JSON.parse(jsonData);
+      temp_rain_options = {
         hAxis: {
             format: 'HH',
             gridlines: {count: 8}
@@ -57,16 +61,71 @@
                      targetAxisIndex: 1,
                      color: '#0000ff'}}
       };
-      console.log(options);
-      console.log(JSON.stringify(options));
+      console.log(temp_rain_options);
+      console.log(JSON.stringify(temp_rain_options));
 
         // Instantiate and draw our chart, passing in some options.
         //var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        var chart = new google.visualization.ComboChart(document.getElementById('chart_temp'));
-        chart.draw(data, options);
+        temp_rain_chart = new google.visualization.ComboChart(document.getElementById('chart_temp'));
+        temp_rain_chart.draw(temp_rain_data, temp_rain_options);
       }
 /* ]]> */
     </script>
+
+    <script type="text/javascript">
+/* <![CDATA[ */
+  function getLastDatapoint() {
+    for (var i=temp_rain_data.getNumberOfRows()-1; i>=0; i--) {
+      if (temp_rain_data.getValue(i,1)!=null &&
+          temp_rain_data.getValue(i,2)!=null) {
+        return temp_rain_data.getValue(i,0);
+      }
+    }
+  }
+  function getLastDatapointIndex() {
+    for (var i=temp_rain_data.getNumberOfRows()-1; i>=0; i--) {
+      if (temp_rain_data.getValue(i,1)!=null &&
+          temp_rain_data.getValue(i,2)!=null) {
+        return i;
+      }
+    }
+  }
+  
+      function updateChart() {
+
+          var jsonData = $.ajax({
+          url: "/chartdataupdate?id=1&from="+moment(getLastDatapoint()).format('YYYYMMDDhhmm'),
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        var obj = JSON.parse(jsonData);
+//        var rows=obj.rows
+        console.log("jsonData="+JSON.stringify(obj));
+
+//        for (i=0;i<jsonData
+//        var rows=obj[0];
+//        console.log("rows="+JSON.stringify(rows));
+
+        var firstRemoved=getLastDatapointIndex();
+        temp_rain_data.removeRows(firstRemoved,temp_rain_data.getNumberOfRows()-firstRemoved);
+
+        for (var key in obj) {
+          var row=obj[key];
+          console.log("key="+key);
+          console.log("row="+JSON.stringify(row));
+          var time=eval("new "+row[0].v);
+          temp_rain_data.addRow([time,parseFloat(row[1].v),parseFloat(row[2].v)]);
+        }
+        // Instantiate and draw our chart, passing in some options.
+        //tchart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        temp_rain_chart.draw(temp_rain_data,temp_rain_options);
+      }
+/* ]]> */
+    </script>
+    
+    <button onclick="updateChart()">Update chart</button>
+    
 </div>
 
 <div th:fragment="graphWind">
