@@ -7,8 +7,14 @@
 <body>
 
   <footer class="footer" th:fragment="footer">
-    <div th:if="${version!=null}" th:inline="text">
-        Versio: [[${version}]]
+    <div class="footer_div" th:if="${version!=null}" th:inline="text">
+      <div class="footer_section">
+        <span class="footer_span">Versio: [[${version}]]</span>
+        <span class="footer_span">Lähdekoodi: <a href="https://github.com/mika-koivusaari/weather">https://github.com/mika-koivusaari/weather</a></span>
+      </div>
+      <address class="footer_section">
+        <a href="mailto:mika.koivusaari@gmail.com?subject=Sääsivustosta">mika.koivusaari@gmail.com</a>
+      </address>
     </div>
   </footer>
   
