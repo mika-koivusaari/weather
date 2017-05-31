@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div th:if="${not #lists.isEmpty(posts)}" th:fragment="lastNews">
+<div id="news" th:if="${not #lists.isEmpty(posts)}" th:fragment="lastNews">
     <a class="news_header" href="http://weather.khyron.dy.fi/wp/blog/"><h3 class="news_header">Uutiset:</h3></a>
     <div class="news" th:each="p : ${posts}">
       <a class="news_link" th:href="${p.link}">
@@ -14,6 +14,41 @@
       <span class="news_time" th:text="*{p.modified != null} ? ${#temporals.format(p.modified, 'dd.MM.yyyy HH:mm')} : ''">Modified</span>
       </a>
     </div>
+    
 </div>
+
+<script type="text/javascript" th:fragment="newsAutoUpdate">
+/* <![CDATA[ */
+      function updateNews() {
+          console.log("updateNews");
+
+          var jsonData = $.ajax({
+          url: "/lastnews",
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        var obj = JSON.parse(jsonData);
+        var newsDiv = document.getElementById("news");
+        var postNumber=0;
+        for (var key in newsDiv.childNodes) {
+          var child=newsDiv.childNodes[key];
+          console.log("child nodeName="+child.nodeName+" child.className="+(child.nodeName=="DIV"?child.className:""));
+          if (child.nodeName=="DIV" && child.className=="news") {
+            console.log("found news div");
+            post=obj[postNumber];
+            console.log(post);
+            postNumber++;
+            child.getElementsByClassName("news_link")[0].href=post.link;
+            child.getElementsByClassName("news_title")[0].innerHTML=post.title;
+            child.getElementsByClassName("news_time")[0].innerHTML=post.modified;
+          }
+        }
+      }      
+
+      addFunction(updateNews,10);
+/* ]]> */
+</script>
+
 </body>
 </html>

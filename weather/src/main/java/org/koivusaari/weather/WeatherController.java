@@ -105,6 +105,16 @@ public class WeatherController {
         return weatherData;
     }
 
+	@RequestMapping("/lastnews")
+    public @ResponseBody ArrayList<WpPost> getLastNews(HttpServletResponse response) {
+		ArrayList<WpPost> posts=wpIntegration.getLastPosts();
+		log.debug("Last news: "+posts);
+
+//        response.setHeader("Cache-Control","max-age=60");
+
+        return posts;
+    }
+
 	protected void setVersion(Model model) {
 		version=getClass().getPackage().getImplementationVersion();
         if (version==null) {

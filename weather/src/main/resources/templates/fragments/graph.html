@@ -20,12 +20,12 @@
       google.charts.load('current', {'packages':['corechart']});
       
       // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(drawTempRainChart);
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      function drawChart() {
+      function drawTempRainChart() {
 
           var jsonData = $.ajax({
           url: "/chartdata?id=1",
@@ -69,63 +69,10 @@
         temp_rain_chart = new google.visualization.ComboChart(document.getElementById('chart_temp'));
         temp_rain_chart.draw(temp_rain_data, temp_rain_options);
       }
+
+      addFunction(drawTempRainChart,10);
 /* ]]> */
     </script>
-
-    <script type="text/javascript">
-/* <![CDATA[ */
-  function getLastDatapoint() {
-    for (var i=temp_rain_data.getNumberOfRows()-1; i>=0; i--) {
-      if (temp_rain_data.getValue(i,1)!=null &&
-          temp_rain_data.getValue(i,2)!=null) {
-        return temp_rain_data.getValue(i,0);
-      }
-    }
-  }
-  function getLastDatapointIndex() {
-    for (var i=temp_rain_data.getNumberOfRows()-1; i>=0; i--) {
-      if (temp_rain_data.getValue(i,1)!=null &&
-          temp_rain_data.getValue(i,2)!=null) {
-        return i;
-      }
-    }
-  }
-  
-      function updateChart() {
-
-          var jsonData = $.ajax({
-          url: "/chartdataupdate?id=1&from="+moment(getLastDatapoint()).format('YYYYMMDDhhmm'),
-          dataType: "json",
-          async: false
-          }).responseText;
-     
-        var obj = JSON.parse(jsonData);
-//        var rows=obj.rows
-        console.log("jsonData="+JSON.stringify(obj));
-
-//        for (i=0;i<jsonData
-//        var rows=obj[0];
-//        console.log("rows="+JSON.stringify(rows));
-
-        var firstRemoved=getLastDatapointIndex();
-        temp_rain_data.removeRows(firstRemoved,temp_rain_data.getNumberOfRows()-firstRemoved);
-
-        for (var key in obj) {
-          var row=obj[key];
-          console.log("key="+key);
-          console.log("row="+JSON.stringify(row));
-          var time=eval("new "+row[0].v);
-          temp_rain_data.addRow([time,parseFloat(row[1].v),parseFloat(row[2].v)]);
-        }
-        // Instantiate and draw our chart, passing in some options.
-        //tchart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        temp_rain_chart.draw(temp_rain_data,temp_rain_options);
-      }
-/* ]]> */
-    </script>
-    
-    <button onclick="updateChart()">Update chart</button>
-    
 </div>
 
 <div th:fragment="graphWind">
@@ -139,12 +86,12 @@
       google.charts.load('current', {'packages':['corechart']});
       
       // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(drawWindChart);
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      function drawChart() {
+      function drawWindChart() {
 
           var jsonData = $.ajax({
           url: "/chartdata?id=2",
@@ -227,6 +174,9 @@
 //        chart.draw(data, options);
         chart.draw(view, options);
       }
+
+      addFunction(drawWindChart,60);
+
 /* ]]> */
     </script>
 

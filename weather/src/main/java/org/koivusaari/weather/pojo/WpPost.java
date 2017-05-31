@@ -2,8 +2,11 @@ package org.koivusaari.weather.pojo;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class WpPost {
 
+    @JsonFormat(pattern="dd.MM.yyyy HH:mm")
 	private LocalDateTime modified;
 	private String link;
 	private String title;
