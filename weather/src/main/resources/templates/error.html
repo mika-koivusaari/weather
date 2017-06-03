@@ -6,6 +6,9 @@
 </head>
 <body>
 
+    <script th:if="${analId!=null}" th:inline="javascript" th:include="fragments/analytics :: googleAnalytics">
+    </script>
+
 <h1>Jotain meni rikki.</h1>
 <h2>Pahoittelemme tilannetta.</h2>
 </body>
