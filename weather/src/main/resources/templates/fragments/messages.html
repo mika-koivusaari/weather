@@ -8,8 +8,9 @@
 </head>
 <body>
 
-<div th:if="${not #lists.isEmpty(messages)}" th:fragment="currentMessages">
+<div id="messageDiv" th:style="${not #lists.isEmpty(messages)} ? 'display:block' : 'display:none'" th:fragment="currentMessages">
   <table class="messages">
+    <tbody id="messages">
     <tr class="message_header">
       <th class="messages">Tila</th>
       <th class="messages">Alkoi</th>
@@ -20,8 +21,58 @@
       <td class="message_time" th:text="*{m.from != null} ? ${#temporals.format(m.from, 'dd.MM.yyyy HH:mm')} : ''">From</td>
       <td class="message_time" th:text="*{m.to != null} ? ${#temporals.format(m.to, 'dd.MM.yyyy HH:mm')} : ''">To</td>
     </tr>
+    </tbody>
   </table>
+  
 </div>
+
+<script type="text/javascript" th:fragment="messagesAutoUpdate">
+/* <![CDATA[ */
+      function updateMessages() {
+        console.log("updateMessages()");
+        var messageData = $.ajax({
+          url: "/currentmessages",
+          dataType: "json",
+          async: false
+          }).responseText;
+     
+        var messages = JSON.parse(messageData);
+        var messageTable = document.getElementById("messages");
+        for (var key=messageTable.childNodes.length-1;key>=0;key--) {
+          var child=messageTable.childNodes[key];
+          if (child.nodeName=="TR" && child.className=="message_row") {
+            messageTable.removeChild(child);
+          }
+        }
+        
+        for (var key in messages) {
+          var m=messages[key];
+          console.log(m.message);
+          var tr = document.createElement("TR");
+          tr.className="message_row";
+          var messageTd = document.createElement("TD")
+          messageTd.innerHTML=m.message;
+          tr.appendChild(messageTd);
+          var fromTd = document.createElement("TD")
+          fromTd.innerHTML=m.from;
+          tr.appendChild(fromTd);
+          var toTd = document.createElement("TD")
+          toTd.innerHTML=m.to;
+          tr.appendChild(toTd);
+          
+          messageTable.appendChild(tr);
+        }
+        
+        if (messages.length>0) {
+          document.getElementById("messageDiv").style.display="block";
+        } else {
+          document.getElementById("messageDiv").style.display="none";
+        }
+      }
+
+      addFunction(updateMessages,1);
+/* ]]> */
+</script>
 
 </body>
 </html>

@@ -123,6 +123,16 @@ public class WeatherController {
         model.addAttribute("version", version);
 	}
 
+	@RequestMapping("/currentmessages")
+    public @ResponseBody List<Message> currentMessages(Model model, HttpServletResponse response) {
+
+		List<Message> messages=messageRepository.findCurrentMessages();
+
+        response.setHeader("Cache-Control","max-age=60");
+
+        return messages;
+	}
+
 	@RequestMapping("/messages")
     public String messages(Model model, HttpServletResponse response) {
 

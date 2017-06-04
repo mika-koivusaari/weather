@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name="MESSAGES")
 public class Message implements Serializable{
@@ -18,7 +20,9 @@ public class Message implements Serializable{
 	@Id
 	private Long messageId;
 	private String author;
+    @JsonFormat(pattern="dd.MM.yyyy HH:mm")
 	private LocalDateTime from;
+    @JsonFormat(pattern="dd.MM.yyyy HH:mm")
 	private LocalDateTime to;
 	private String message;
 	public Long getMessageId() {
