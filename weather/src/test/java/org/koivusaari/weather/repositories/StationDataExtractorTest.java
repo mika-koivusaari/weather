@@ -57,7 +57,7 @@ public class StationDataExtractorTest extends TestCase {
 	    when(rs.getMetaData()).thenReturn(rsmt);
 	    when(rs.next()).thenReturn(true);
 	    when(rsmt.getColumnCount()).thenReturn(1);
-	    when(rs.getObject(1)).thenReturn(new BigDecimal(1.1));
+	    when(rs.getObject(1)).thenReturn(new BigDecimal("1.1"));
 	    when(rsmt.getColumnLabel(1)).thenReturn("TEMPERATURE");
 	    
 	    WeatherData st=ste.extractData(rs);

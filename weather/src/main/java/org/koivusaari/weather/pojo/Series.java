@@ -1,5 +1,6 @@
 package org.koivusaari.weather.pojo;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -9,8 +10,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="GRAPHDATASERIES")
-public class Series {
+public class Series implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8708281078817679895L;
 	@Id
     private Long seriesid;
     private Long sensorid;
