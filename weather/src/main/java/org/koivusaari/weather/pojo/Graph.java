@@ -2,26 +2,23 @@ package org.koivusaari.weather.pojo;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
 
 import org.koivusaari.weather.LocalDateTimeConverter;
 
 @Entity
 public class Graph implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2880420227975753735L;
 	@Id
 	private Long graphId;
     private String name;

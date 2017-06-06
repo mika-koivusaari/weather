@@ -2,7 +2,6 @@ package org.koivusaari.weather;
 
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.fasterxml.jackson.core.JsonGenerator;

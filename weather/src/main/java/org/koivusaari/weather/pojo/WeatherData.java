@@ -5,12 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import org.koivusaari.weather.CustomDateSerializer;
-import org.koivusaari.weather.NewDateSerializer;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author mik

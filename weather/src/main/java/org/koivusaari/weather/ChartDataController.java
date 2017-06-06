@@ -1,15 +1,11 @@
 package org.koivusaari.weather;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,8 +31,6 @@ import org.koivusaari.weather.repositories.GraphRepository;
 import org.koivusaari.weather.repositories.SensorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -149,7 +143,7 @@ public class ChartDataController {
 //	        ArrayList<ChartCol> chartCols = createCols(data, graph);
 //	        chartData.setCols(chartCols);
 	        
-	        ArrayList chartrows=new ArrayList();
+	        ArrayList<ArrayList<ChartV>> chartrows=new ArrayList<ArrayList<ChartV>>();
 	        for (ChartRow row:data){
 	        	ArrayList<ChartV> list=new ArrayList<ChartV>();
 	        	list.add(new ChartV(row.getTime()));
