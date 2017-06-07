@@ -60,9 +60,9 @@ public class ChartDataControllerTest extends TestCase {
 //
 	public void testDataToChart() {
 		ArrayList<Long> ids=new ArrayList<Long>();
-		ids.add(new Long(1));
-		ids.add(new Long(2));
-		ids.add(new Long(3));
+		ids.add(Long.valueOf(1));
+		ids.add(Long.valueOf(2));
+		ids.add(Long.valueOf(3));
 
 		List<ChartRow> data=new ArrayList<ChartRow>();
 		GregorianCalendar cal = new GregorianCalendar();
@@ -89,7 +89,7 @@ public class ChartDataControllerTest extends TestCase {
 		
         for (int i=1;i<=data.get(0).getData().size();i++){
         	Sensors sensor=new Sensors();
-        	sensor.setUnitId(new Long(i));
+        	sensor.setUnitId(Long.valueOf(i));
 		    when(sensorRepository.findOne(ids.get(i-1))).thenReturn(sensor);
         }
 
@@ -97,12 +97,12 @@ public class ChartDataControllerTest extends TestCase {
         for (int i=1;i<=data.get(0).getData().size();i++){
 			GraphSeries gs=new GraphSeries();
 			Series s=mock(Series.class);
-			when(s.getSensorid()).thenReturn(new Long(i));
+			when(s.getSensorid()).thenReturn(Long.valueOf(i));
 			gs.setSeries(s);
 			gsList.add(gs);
 
         	Sensors sensor=new Sensors();
-        	sensor.setUnitId(new Long(i));
+        	sensor.setUnitId(Long.valueOf(i));
         	sensor.setName("gen name "+i);
 		    when(sensorRepository.findOne(ids.get(i-1))).thenReturn(sensor);
         }
@@ -125,9 +125,9 @@ public class ChartDataControllerTest extends TestCase {
 	
 	public void testCreateCols(){
 		ArrayList<Long> ids=new ArrayList<Long>();
-		ids.add(new Long(1));
-		ids.add(new Long(2));
-		ids.add(new Long(3));
+		ids.add(Long.valueOf(1));
+		ids.add(Long.valueOf(2));
+		ids.add(Long.valueOf(3));
 
 		List<ChartRow> data=new ArrayList<ChartRow>();
 		GregorianCalendar cal = new GregorianCalendar();
@@ -156,12 +156,12 @@ public class ChartDataControllerTest extends TestCase {
         for (int i=1;i<=data.get(0).getData().size();i++){
 			GraphSeries gs=new GraphSeries();
 			Series s=mock(Series.class);
-			when(s.getSensorid()).thenReturn(new Long(i));
+			when(s.getSensorid()).thenReturn(Long.valueOf(i));
 			gs.setSeries(s);
 			gsList.add(gs);
 
         	Sensors sensor=new Sensors();
-        	sensor.setUnitId(new Long(i));
+        	sensor.setUnitId(Long.valueOf(i));
         	sensor.setName("gen name "+i);
 		    when(sensorRepository.findOne(ids.get(i-1))).thenReturn(sensor);
         }
@@ -253,21 +253,21 @@ public class ChartDataControllerTest extends TestCase {
 		GraphSeries gs=new GraphSeries();
 		Series s=mock(Series.class);
 //		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
-		when(s.getSensorid()).thenReturn(new Long(1));
+		when(s.getSensorid()).thenReturn(Long.valueOf(1));
 		gs.setSeries(s);
 		gsList.add(gs);
 
 		gs=new GraphSeries();
 		s=mock(Series.class);
 //		when(s.getMinGroupByTime()).thenReturn("1 MINUTES");
-		when(s.getSensorid()).thenReturn(new Long(2));
+		when(s.getSensorid()).thenReturn(Long.valueOf(2));
 		gs.setSeries(s);
 		gsList.add(gs);
 
 		gs=new GraphSeries();
 		s=mock(Series.class);
 //		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
-		when(s.getSensorid()).thenReturn(new Long(3));
+		when(s.getSensorid()).thenReturn(Long.valueOf(3));
 		gs.setSeries(s);
 		gsList.add(gs);
 
@@ -298,14 +298,14 @@ public class ChartDataControllerTest extends TestCase {
 		Series s=mock(Series.class);
 		when(s.getMinGroupByTime()).thenReturn("1 HOURS");
 		when(s.getGroupby()).thenReturn("AVG(value)");
-		when(s.getSensorid()).thenReturn(new Long(1));
+		when(s.getSensorid()).thenReturn(Long.valueOf(1));
 		gs.setSeries(s);
 		gsList.add(gs);
 
 		gs=new GraphSeries();
 		s=mock(Series.class);
 		when(s.getMinGroupByTime()).thenReturn("1 MINUTES");
-		when(s.getSensorid()).thenReturn(new Long(2));
+		when(s.getSensorid()).thenReturn(Long.valueOf(2));
 		gs.setSeries(s);
 		gsList.add(gs);
 
@@ -313,7 +313,7 @@ public class ChartDataControllerTest extends TestCase {
 		s=mock(Series.class);
 		when(s.getMinGroupByTime()).thenReturn("10 MINUTES");
 		when(s.getGroupby()).thenReturn("SUM(value)");
-		when(s.getSensorid()).thenReturn(new Long(3));
+		when(s.getSensorid()).thenReturn(Long.valueOf(3));
 		gs.setSeries(s);
 		gsList.add(gs);
 
@@ -440,15 +440,15 @@ public class ChartDataControllerTest extends TestCase {
 		ArrayList<GraphDataSeries> dataSeriesList=new ArrayList<GraphDataSeries>(); 
         for (int i=1;i<=series;i++){
         	GraphDataSeries s=new GraphDataSeries();
-        	s.setSeriesid(new Long(i));
-        	s.setSensorid(new Long(i));
+        	s.setSeriesid(Long.valueOf(i));
+        	s.setSensorid(Long.valueOf(i));
         	s.setDescription("Mocked series "+i);
         	s.setGroupby("avg");
         	dataSeriesList.add(s);
         }
         for (int i=series+1;i<=(series+compoundSeries);i++){
         	GraphDataSeries s=new GraphDataSeries();
-        	s.setSeriesid(new Long(i));
+        	s.setSeriesid(Long.valueOf(i));
         	s.setSensorid(null);
         	s.setValuefunction(":1-:2");
         	s.setDescription("Mocked series "+i);

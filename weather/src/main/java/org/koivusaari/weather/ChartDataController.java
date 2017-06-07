@@ -275,16 +275,16 @@ public class ChartDataController {
 					String trunc=series.getMinGroupByTime()==null?defaultTrunc:series.getMinGroupByTime();
 					log.debug("Value "+m.group(1));
 					int seriesid=Integer.parseInt(m.group(1));
-					log.debug("GraphSeries("+seriesid+")="+graphSeriesMap.get(new Long(seriesid)));
-					String value=processValueFunction("combineddata"+j+".value",graphSeriesMap.get(new Long(seriesid)).getValuefunction());
+					log.debug("GraphSeries("+seriesid+")="+graphSeriesMap.get(Long.valueOf(seriesid)));
+					String value=processValueFunction("combineddata"+j+".value",graphSeriesMap.get(Long.valueOf(seriesid)).getValuefunction());
 					value="("+value+")";
 					valueFunction=valueFunction.replaceAll(m.group(),value );
 					if (trunc==null){
 					    from  =from  +"       LEFT JOIN (select time, value from data where sensorid=:compound"+j+") combineddata"+j+" ON time_series = combineddata"+j+".time\n";
 					} else {
-					    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time, "+graphSeriesMap.get(new Long(seriesid)).getGroupby()+"(value) as value from data where sensorid=:compound"+j+" group by date_trunc('"+trunc+"',time)) combineddata"+j+" ON time_series = combineddata"+j+".time\n";
+					    from  =from  +"       LEFT JOIN (select date_trunc('"+trunc+"',time) as time, "+graphSeriesMap.get(Long.valueOf(seriesid)).getGroupby()+"(value) as value from data where sensorid=:compound"+j+" group by date_trunc('"+trunc+"',time)) combineddata"+j+" ON time_series = combineddata"+j+".time\n";
 					}
-					params.put("compound"+j, graphSeriesMap.get(new Long(seriesid)).getSensorid());
+					params.put("compound"+j, graphSeriesMap.get(Long.valueOf(seriesid)).getSensorid());
 					j++;
 				}
 				select=select+", "+valueFunction;
