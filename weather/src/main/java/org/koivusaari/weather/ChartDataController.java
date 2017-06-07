@@ -176,7 +176,7 @@ public class ChartDataController {
 		Matcher m=groupByPattern.matcher(trunc);
 		log.debug("match found="+m.matches());
 		String amount=m.group(1);
-		if (amount.equals("")){
+		if ("".equals(amount)){
 		  	amount="1";
 		}
 		String unit=m.group(2);
@@ -259,7 +259,7 @@ public class ChartDataController {
 	            String value="d"+i+".value";
 	            log.debug("trunc="+trunc+" valueFunction="+valueFunction+" value="+value);
 				select=select+", "+processValueFunction(value, valueFunction);
-				if (trunc=="1 MINUTES"){
+				if ("1 MINUTES".equals(trunc)){
 				    from  =from  +"       LEFT JOIN (select time as time, value as value from data where sensorid=:"+i+" and time between :from::timestamp and :to::timestamp) d"+i+" ON time_series = d"+i+".time\n";
 				} else {
 				    from  =from  +"       LEFT JOIN (select "+getTruncFunction(trunc)+" as time, "+(series.getGroupby()==null?"value":series.getGroupby())+" as value from data where sensorid=:"+i+" and time between "+getTruncFunction(defaultTrunc, ":from::timestamp")+" and "+getTruncFunction(defaultTrunc, ":to::timestamp")+" group by "+getTruncFunction(trunc)+") d"+i+" ON time_series = d"+i+".time\n";
@@ -323,7 +323,7 @@ public class ChartDataController {
 			Matcher m=groupByPattern.matcher(trunc);
 			if (m.matches()){
 			    String amount=m.group(1);
-			    if (amount.equals("")){
+			    if ("".equals(amount)){
 			    	amount="1";
 			    }
 			    String unit=m.group(2);
@@ -370,14 +370,14 @@ public class ChartDataController {
 		if (m.matches()){
 			String amount=m.group(1);
 			String unit=m.group(2);
-			if (unit.equals("MINUTES")){
-				if (amount.equals("1")){
+			if ("MINUTES".equals(unit)){
+				if ("1".equals(amount)){
 					function=field;
 				} else {
 					function="round_minutes("+field+","+amount+")";
 				}
-			} else if (unit.equals("HOURS")){
-				if (amount.equals("1")){
+			} else if ("HOURS".equals(unit)){
+				if ("1".equals(amount)){
 					function="date_trunc('HOUR',"+field+")";
 				} else {
 					function="round_hours("+field+","+amount+")";
