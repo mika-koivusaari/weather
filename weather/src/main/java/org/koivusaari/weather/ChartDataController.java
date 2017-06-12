@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.koivusaari.weather.DataMapper;
 import org.koivusaari.weather.pojo.ChartRow;
 import org.koivusaari.weather.pojo.Graph;
 import org.koivusaari.weather.pojo.GraphDataSeries;
@@ -40,6 +39,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ChartDataController {
 
+	private static final String PARAM_TO = "to";
+
+	private static final String PARAM_FROM = "from";
+
 	public enum GroupBy {
 		MONTH("month"),
 		WEEK("week"),
@@ -61,10 +64,10 @@ public class ChartDataController {
 	HashMap<Long,GraphDataSeries> dataSeriesMap=new HashMap<Long,GraphDataSeries>();
 	HashMap<Long,GraphDataSeries> graphSeriesMap=new HashMap<Long,GraphDataSeries>();
 	
-	public ChartDataController(NamedParameterJdbcTemplate jdbcTemplate
-			                  ,SensorRepository sensorRepository
-			                  ,GraphRepository graphRepository
-			                  ,GraphDataSeriesRepository graphDataSeriesRepository) {
+	public ChartDataController(final NamedParameterJdbcTemplate jdbcTemplate
+			                  ,final SensorRepository sensorRepository
+			                  ,final GraphRepository graphRepository
+			                  ,final GraphDataSeriesRepository graphDataSeriesRepository) {
 		super();
 		this.jdbcTemplate = jdbcTemplate;
 		this.sensorRepository = sensorRepository;
@@ -74,68 +77,85 @@ public class ChartDataController {
 
 	@CrossOrigin
 	@RequestMapping("/chartdata")
-    public Object index(@RequestParam(value="id") String graphId, HttpServletResponse response) {
+    public Object index(@RequestParam(value="id") final String graphId,
+    		            final HttpServletResponse response) {
     	        
-		log.info("Params:");
-		log.info("graphId: "+graphId);
-		log.info("Response: "+response);
+		if (log.isDebugEnabled()){
+			log.debug("Params:");
+			log.debug("graphId: "+graphId);
+			log.debug("Response: "+response);
+		}
 		
-		Graph graph=graphRepository.findOne(Long.parseLong(graphId));
+		final Graph graph=graphRepository.findOne(Long.parseLong(graphId));
 
-		log.info("Querying data for today:");
-		HashMap<String,Object> params=new HashMap<String,Object>();
-		String sql=createSelect(graph,params);
-		log.info("select:\n"+sql);
+		if (log.isDebugEnabled()){
+			log.debug("Querying data for today:");
+		}
+		final HashMap<String,Object> params=new HashMap<String,Object>();
+		final String sql=createSelect(graph,params);
+		if (log.isDebugEnabled()){
+			log.debug("select:\n"+sql);
+		}
 		if (graph.getFrom()!=null || graph.getTo()!=null){
 			if (graph.getDynamic()==null||graph.getDynamic()==Graph.STATIC_TIME) {
-				params.put("from", Date.from(graph.getFrom().atZone(ZoneId.systemDefault()).toInstant()));
-				params.put("to", Date.from(graph.getTo().atZone(ZoneId.systemDefault()).toInstant()));
+				params.put(PARAM_FROM, Date.from(graph.getFrom().atZone(ZoneId.systemDefault()).toInstant()));
+				params.put(PARAM_TO, Date.from(graph.getTo().atZone(ZoneId.systemDefault()).toInstant()));
 			} else {
 				Duration p=Duration.between(graph.getFrom(), graph.getTo());
 				LocalDateTime to=LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 				LocalDateTime from=to.minus(p);
-				params.put("from", Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
-				params.put("to", Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
-				log.info("Dynamic true.");
-				log.info("period: "+p);
-				log.info("fromDate: "+params.get("from"));
-				log.info("toDate: "+params.get("to"));
+				params.put(PARAM_FROM, Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
+				params.put(PARAM_TO, Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
+				if (log.isDebugEnabled()){
+					log.debug("Dynamic true.");
+					log.debug("period: "+p);
+					log.debug("fromDate: "+params.get(PARAM_FROM));
+					log.debug("toDate: "+params.get(PARAM_TO));
+				}
 			}
 		}
 
-		log.debug("Params: "+params);
-		List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
+		if (log.isDebugEnabled()){
+			log.debug("Params: "+params);
+		}
+		final List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
 		response.setHeader("Cache-Control","max-age="+getMaxAge(graph, data));
-    	ChartData chartData = dataToChart(data,graph);
+    	final ChartData chartData = dataToChart(data,graph);
         return chartData;
     }
 
 	@CrossOrigin
 	@RequestMapping("/chartdataupdate")
-    public Object chartDataUpdate(@RequestParam(value="id") String graphId
-    		                     ,@RequestParam(value="from") String updateFrom
-    		                     ,HttpServletResponse response) {
+    public Object chartDataUpdate(final @RequestParam(value="id") String graphId
+    		                     ,final @RequestParam(value=PARAM_FROM) String updateFrom
+    		                     ,final HttpServletResponse response) {
     	        
-		log.debug("Params:");
-		log.debug("graphId: "+graphId);
-		log.debug("from: "+updateFrom);
-		log.debug("Response: "+response);
+		if (log.isDebugEnabled()){
+			log.debug("Params:");
+			log.debug("graphId: "+graphId);
+			log.debug("from: "+updateFrom);
+			log.debug("Response: "+response);
+		}
 		
-		Graph graph=graphRepository.findOne(Long.parseLong(graphId));
+		final Graph graph=graphRepository.findOne(Long.parseLong(graphId));
 
-		HashMap<String,Object> params=new HashMap<String,Object>();
-		String sql=createSelect(graph,params);
-		log.debug("select:\n"+sql);
+		final HashMap<String,Object> params=new HashMap<String,Object>();
+		final String sql=createSelect(graph,params);
+		if (log.isDebugEnabled()){
+			log.debug("select:\n"+sql);
+		}
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-		LocalDateTime from = LocalDateTime.parse(updateFrom, formatter);
-		LocalDateTime to=LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+		final LocalDateTime from = LocalDateTime.parse(updateFrom, formatter);
+		final LocalDateTime to=LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
-		params.put("from", Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
-		params.put("to", Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
+		params.put(PARAM_FROM, Date.from(from.atZone(ZoneId.systemDefault()).toInstant()));
+		params.put(PARAM_TO, Date.from(to.atZone(ZoneId.systemDefault()).toInstant()));
 
-		log.debug("Params: "+params);
-		List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
+		if (log.isDebugEnabled()){
+			log.debug("Params: "+params);
+		}
+		final List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
 		response.setHeader("Cache-Control","max-age="+getMaxAge(graph, data));
 //    	ChartData chartData = dataToChart(data,graph);
 //		protected ChartData dataToChart(List<ChartRow> data, Graph graph) {
@@ -143,7 +163,7 @@ public class ChartDataController {
 //	        ArrayList<ChartCol> chartCols = createCols(data, graph);
 //	        chartData.setCols(chartCols);
 	        
-	        ArrayList<ArrayList<ChartV>> chartrows=new ArrayList<ArrayList<ChartV>>();
+	        final ArrayList<ArrayList<ChartV>> chartrows=new ArrayList<ArrayList<ChartV>>();
 	        for (ChartRow row:data){
 	        	ArrayList<ChartV> list=new ArrayList<ChartV>();
 	        	list.add(new ChartV(row.getTime()));
@@ -165,43 +185,53 @@ public class ChartDataController {
     }
 
 	protected long getMaxAge(Graph graph, List<ChartRow> data){
-		String trunc=getSmallestTrunc(graph);
-		log.debug("trunc="+trunc);
+		final String trunc=getSmallestTrunc(graph);
+		if (log.isDebugEnabled()){
+			log.debug("trunc="+trunc);
+		}
 		
-		ChartRow row=data.get(data.size()-1);
-		LocalDateTime lastData=LocalDateTime.ofInstant(row.getTime().toInstant(), ZoneId.systemDefault());
-		log.debug("lastData="+lastData);
+		final ChartRow row=data.get(data.size()-1);
+		final LocalDateTime lastData=LocalDateTime.ofInstant(row.getTime().toInstant(), ZoneId.systemDefault());
+		if (log.isDebugEnabled()){
+			log.debug("lastData="+lastData);
+		}
 		
-		Pattern groupByPattern = Pattern.compile("(\\d*) ?(\\D+)"); //numbers as groups  
-		Matcher m=groupByPattern.matcher(trunc);
-		log.debug("match found="+m.matches());
+		final Pattern groupByPattern = Pattern.compile("(\\d*) ?(\\D+)"); //numbers as groups  
+		final Matcher m=groupByPattern.matcher(trunc);
+		if (log.isDebugEnabled()){
+			log.debug("match found="+m.matches());
+		}
 		String amount=m.group(1);
 		if ("".equals(amount)){
 		  	amount="1";
 		}
-		String unit=m.group(2);
-		Duration duration=Duration.of(Long.parseLong(amount), ChronoUnit.valueOf(unit));
+		final String unit=m.group(2);
+		final Duration duration=Duration.of(Long.parseLong(amount), ChronoUnit.valueOf(unit));
 		
-		LocalDateTime cacheEnd=lastData.plus(duration);
-		log.debug("cacheEnd="+cacheEnd);
-		Duration maxAge=Duration.between(LocalDateTime.now(), cacheEnd);
-		log.debug("duration="+maxAge+" maxAge="+maxAge.getSeconds());
+		final LocalDateTime cacheEnd=lastData.plus(duration);
+		if (log.isDebugEnabled()){
+			log.debug("cacheEnd="+cacheEnd);
+		}
+		final Duration maxAge=Duration.between(LocalDateTime.now(), cacheEnd);
+		if (log.isDebugEnabled()){
+			log.debug("duration="+maxAge+" maxAge="+maxAge.getSeconds());
+		}
 		return maxAge.getSeconds();
 	}
 	
-	protected ChartData dataToChart(List<ChartRow> data, Graph graph) {
-		ChartData chartData=new ChartData();
-        ArrayList<ChartCol> chartCols = createCols(data, graph);
+	protected ChartData dataToChart(final List<ChartRow> data, final Graph graph) {
+		final ChartData chartData=new ChartData();
+        final ArrayList<ChartCol> chartCols = createCols(data, graph);
         chartData.setCols(chartCols);
         
-        ArrayList<ChartC> chartrows=new ArrayList<ChartC>();
-        for (ChartRow row:data){
-        	ArrayList<ChartV> list=new ArrayList<ChartV>();
+        final ArrayList<ChartC> chartrows=new ArrayList<ChartC>();
+        for (final ChartRow row:data){
+        	final ArrayList<ChartV> list=new ArrayList<ChartV>();
         	list.add(new ChartV(row.getTime()));
-        	for (Float value:row.getData()){
+        	for (final Float value:row.getData()){
         		list.add(new ChartV(value));
         	}
-        	ChartC c=new ChartC();
+        	final ChartC c=new ChartC();
         	c.setC(list);
         	chartrows.add(c);
         }
@@ -238,10 +268,10 @@ public class ChartDataController {
 	
 	protected String createSelect(Graph graph,HashMap<String,Object> params){
 		Pattern seriesIdPattern = Pattern.compile(":(\\d+)"); //numbers as groups  
-		String select="";
-		String from="";
-		String where="";
-		String groupBy="";
+		String select;
+		String from;
+//		String where="";
+//		String groupBy="";
 
 		//TODO Currently there is trunking of data with long timespans
 //		String defaultTrunc=getGroupBy(graph.getFrom(), graph.getTo());
@@ -293,7 +323,8 @@ public class ChartDataController {
 		}
 		select = select+"\n";
 		
-		return select+from+where+groupBy+" ORDER BY 1";
+//		return select+from+where+groupBy+" ORDER BY 1";
+		return select+from+" ORDER BY 1";
 	}
 
 	protected String getSmallestTrunc(Graph graph){
@@ -405,7 +436,7 @@ public class ChartDataController {
 		if (from==null || to==null){
 			return null;
 		}
-		String groupBy=null;
+		String groupBy;
 	    long hours=ChronoUnit.HOURS.between(from,to);
 	    if (hours>24*30) { //month
 	    	groupBy="day";
@@ -413,6 +444,8 @@ public class ChartDataController {
 	    	groupBy="hour";
 	    } else if (hours>24){ //day
 	    	groupBy="hour";
+	    } else {
+	    	groupBy=null;
 	    }
 	    log.info("hours: "+hours+" group by: "+groupBy);
 	    return groupBy;
