@@ -28,6 +28,7 @@ import org.koivusaari.weather.pojo.googlecharts.ChartV;
 import org.koivusaari.weather.repositories.GraphDataSeriesRepository;
 import org.koivusaari.weather.repositories.GraphRepository;
 import org.koivusaari.weather.repositories.SensorRepository;
+import org.koivusaari.weather.util.OutsideTempGraphParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -278,7 +279,7 @@ public class ChartDataController {
 		String defaultTrunc=getSmallestTrunc(graph);
 		
 		select="SELECT time_series";
-		from  ="  FROM generate_series("+getTruncFunction(defaultTrunc, ":from::timestamp")+", "+getTruncFunction(defaultTrunc, ":to::timestamp")+", '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
+		from  ="  FROM generate_series("+getTruncFunction(defaultTrunc, ":from::timestamp")+", "+getTruncFunction(defaultTrunc, ":to::timestamp")+" - INTERVAL '1 minute', '"+(defaultTrunc==null?"1 minute":defaultTrunc)+"') time_series\n";
 		int i=0;
 		for (GraphSeries gs:graph.getGraphSeries()){
 			Series series=gs.getSeries();
