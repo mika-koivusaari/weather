@@ -64,16 +64,19 @@ public class ChartDataController {
 	GraphRepository graphRepository;
 	HashMap<Long,GraphDataSeries> dataSeriesMap=new HashMap<Long,GraphDataSeries>();
 	HashMap<Long,GraphDataSeries> graphSeriesMap=new HashMap<Long,GraphDataSeries>();
+	OutsideTempGraphParameters outsideTempGraphParameters;
 	
 	public ChartDataController(final NamedParameterJdbcTemplate jdbcTemplate
 			                  ,final SensorRepository sensorRepository
 			                  ,final GraphRepository graphRepository
-			                  ,final GraphDataSeriesRepository graphDataSeriesRepository) {
+			                  ,final GraphDataSeriesRepository graphDataSeriesRepository
+			                  ,final OutsideTempGraphParameters outsideTempGraphParameters) {
 		super();
 		this.jdbcTemplate = jdbcTemplate;
 		this.sensorRepository = sensorRepository;
 		this.graphRepository = graphRepository;
 		this.graphDataSeriesRepository = graphDataSeriesRepository;
+		this.outsideTempGraphParameters = outsideTempGraphParameters;
 	}
 
 	@CrossOrigin
@@ -121,7 +124,8 @@ public class ChartDataController {
 		}
 		final List<ChartRow> data=jdbcTemplate.query(sql,params,new DataMapper());
 		response.setHeader("Cache-Control","max-age="+getMaxAge(graph, data));
-    	final ChartData chartData = dataToChart(data,graph);
+    	ChartData chartData = dataToChart(data,graph);
+    	chartData=metadata(data, graph, chartData);
         return chartData;
     }
 
@@ -185,6 +189,42 @@ public class ChartDataController {
 //		return chartData;
     }
 
+	protected ChartData metadata(final List<ChartRow> data, final Graph graph, final ChartData chart){
+		ArrayList<Float> maxValues=new ArrayList<Float>();
+		ArrayList<Float> minValues=new ArrayList<Float>();
+		
+		for (Float value:data.get(0).getData()){
+			maxValues.add(value);
+			minValues.add(value);
+		}
+		
+		for (ChartRow row:data){
+			for (int i=0;i<row.getData().size();i++){
+				Float val=row.getData().get(i);
+				if (maxValues.get(i)==null){
+					maxValues.set(i, val);
+				} else if (val!=null && maxValues.get(i).compareTo(val)>0){
+					maxValues.set(i, val);
+				}
+				if (minValues.get(i)==null){
+					minValues.set(i, val);
+				} else if (val!=null && minValues.get(i).compareTo(val)<0){
+					minValues.set(i, val);
+				}
+			}
+		}
+		
+		for (int i=0;i<maxValues.size();i++){
+			//Time column is the first one, skip it.
+			ChartCol col=chart.getCols().get(i+1);
+			OutsideTempGraphParameters.GraphScale scale= outsideTempGraphParameters.getScale(minValues.get(i).floatValue(), maxValues.get(i).floatValue());
+			col.setScaleMax(scale.getFrom());
+			col.setScaleMin(scale.getTo());
+		}
+
+		return chart;
+	}
+	
 	protected long getMaxAge(Graph graph, List<ChartRow> data){
 		final String trunc=getSmallestTrunc(graph);
 		if (log.isDebugEnabled()){

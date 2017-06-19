@@ -7,7 +7,8 @@ public class ChartCol {
 	private String pattern=null;
 	private String p=null;
 	private String unit;
-	
+	private Float scaleMin;
+	private Float scaleMax;
 	
 	public ChartCol(String id, String type) {
 		super();
@@ -65,6 +66,22 @@ public class ChartCol {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public Float getScaleMin() {
+		return scaleMin;
+	}
+
+	public void setScaleMin(Float scaleMin) {
+		this.scaleMin = scaleMin;
+	}
+
+	public Float getScaleMax() {
+		return scaleMax;
+	}
+
+	public void setScaleMax(Float scaleMax) {
+		this.scaleMax = scaleMax;
 	}
 	
 	
