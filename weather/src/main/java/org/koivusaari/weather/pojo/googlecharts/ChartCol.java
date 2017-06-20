@@ -9,7 +9,16 @@ public class ChartCol {
 	private String unit;
 	private Float scaleMin;
 	private Float scaleMax;
+	private float[] ticks;
 	
+	public float[] getTicks() {
+		return ticks;
+	}
+
+	public void setTicks(float[] ticks) {
+		this.ticks = ticks;
+	}
+
 	public ChartCol(String id, String type) {
 		super();
 		this.id = id;

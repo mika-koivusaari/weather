@@ -33,9 +33,9 @@ public class OutsideTempGraphParameters {
 	public OutsideTempGraphParameters(NamedParameterJdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate=jdbcTemplate;
 
-		scales.put("mid",new GraphScale("mid", -15, 15));
-		scales.put("winter",new GraphScale("winter", -30, 5));
-		scales.put("summer",new GraphScale("summer", -5, 35));
+		scales.put("mid",new GraphScale("mid", -15, 15,new float[] {-10,0,10}));
+		scales.put("winter",new GraphScale("winter", -30, 5,new float[]{-30,-20,-10,0}));
+		scales.put("summer",new GraphScale("summer", -5, 35,new float[]{0,10,20,30}));
 		
 		generateScales();
 		if (previous==null){
@@ -118,7 +118,7 @@ public class OutsideTempGraphParameters {
 			}
 		}
 		if (scale==null){
-			scale=new GraphScale("Generated", Math.round(min-2), Math.round(max+2));
+			scale=new GraphScale("Generated", Math.round(min-2), Math.round(max+2),null);
 		}
 		return scale;
 	}
@@ -128,12 +128,14 @@ public class OutsideTempGraphParameters {
 		private String name;
 		private float from;
 		private float to;
+		private float[] ticks;
 
-		public GraphScale(String name, float from, float to) {
+		public GraphScale(String name, float from, float to,float[] ticks) {
 			super();
 			this.name = name;
 			this.from = from;
 			this.to = to;
+			this.ticks = ticks;
 		}
 
 		public boolean isBetween(float min, float max){
@@ -163,6 +165,10 @@ public class OutsideTempGraphParameters {
 
 		public void setTo(int to) {
 			this.to = to;
+		}
+
+		public float[] getTicks() {
+			return ticks;
 		}
 
 	}

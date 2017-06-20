@@ -220,6 +220,7 @@ public class ChartDataController {
 			OutsideTempGraphParameters.GraphScale scale= outsideTempGraphParameters.getScale(minValues.get(i).floatValue(), maxValues.get(i).floatValue());
 			col.setScaleMax(scale.getFrom());
 			col.setScaleMin(scale.getTo());
+			col.setTicks(scale.getTicks());
 		}
 
 		return chart;
