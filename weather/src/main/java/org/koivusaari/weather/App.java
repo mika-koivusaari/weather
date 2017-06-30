@@ -1,6 +1,6 @@
 package org.koivusaari.weather;
 
-import org.koivusaari.weather.util.OutsideTempGraphParameters;
+import org.koivusaari.weather.scale.OutsideTempGraphParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

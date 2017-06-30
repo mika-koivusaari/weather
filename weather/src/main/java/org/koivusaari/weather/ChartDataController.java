@@ -28,7 +28,7 @@ import org.koivusaari.weather.pojo.googlecharts.ChartV;
 import org.koivusaari.weather.repositories.GraphDataSeriesRepository;
 import org.koivusaari.weather.repositories.GraphRepository;
 import org.koivusaari.weather.repositories.SensorRepository;
-import org.koivusaari.weather.util.OutsideTempGraphParameters;
+import org.koivusaari.weather.scale.OutsideTempGraphParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
