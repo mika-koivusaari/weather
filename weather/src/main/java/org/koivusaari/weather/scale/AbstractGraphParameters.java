@@ -4,7 +4,7 @@ import org.koivusaari.weather.scale.AbstractGraphParameters.GraphScale;
 
 public abstract class AbstractGraphParameters {
 
-	abstract GraphScale getScale(float min, float max);
+	public abstract GraphScale getScale(float min, float max);
 
 	public class GraphScale{
 	

@@ -15,8 +15,22 @@ public class GraphDataSeries {
     private String valuefunction;
 	private String name;
     private String description;
+    private String minGroupByTime;
+    private String scaleClass;
 
-    public Long getSeriesid() {
+    public String getMinGroupByTime() {
+		return minGroupByTime;
+	}
+	public void setMinGroupByTime(String minGroupByTime) {
+		this.minGroupByTime = minGroupByTime;
+	}
+	public String getScaleClass() {
+		return scaleClass;
+	}
+	public void setScaleClass(String scaleClass) {
+		this.scaleClass = scaleClass;
+	}
+	public Long getSeriesid() {
 		return seriesid;
 	}
 	public void setSeriesid(Long seriesid) {

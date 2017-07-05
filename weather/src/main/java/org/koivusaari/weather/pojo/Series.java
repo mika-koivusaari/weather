@@ -26,7 +26,14 @@ public class Series implements Serializable {
     private String minGroupByTime;
     @OneToMany(mappedBy="series")
     private List<GraphSeries> graphSeries;
+    private String scaleClass;
     
+	public String getScaleClass() {
+		return scaleClass;
+	}
+	public void setScaleClass(String scaleClass) {
+		this.scaleClass = scaleClass;
+	}
 	public Long getSeriesid() {
 		return seriesid;
 	}

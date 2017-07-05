@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,9 +29,11 @@ import org.koivusaari.weather.pojo.googlecharts.ChartV;
 import org.koivusaari.weather.repositories.GraphDataSeriesRepository;
 import org.koivusaari.weather.repositories.GraphRepository;
 import org.koivusaari.weather.repositories.SensorRepository;
+import org.koivusaari.weather.scale.AbstractGraphParameters;
 import org.koivusaari.weather.scale.OutsideTempGraphParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +68,8 @@ public class ChartDataController {
 	HashMap<Long,GraphDataSeries> dataSeriesMap=new HashMap<Long,GraphDataSeries>();
 	HashMap<Long,GraphDataSeries> graphSeriesMap=new HashMap<Long,GraphDataSeries>();
 	OutsideTempGraphParameters outsideTempGraphParameters;
+	@Autowired
+	Map<String,AbstractGraphParameters> graphParameters;
 	
 	public ChartDataController(final NamedParameterJdbcTemplate jdbcTemplate
 			                  ,final SensorRepository sensorRepository
@@ -214,13 +219,23 @@ public class ChartDataController {
 			}
 		}
 		
+		if (log.isDebugEnabled()){
+			log.debug("Set scales");
+		}
 		for (int i=0;i<maxValues.size();i++){
-			//Time column is the first one, skip it.
-			ChartCol col=chart.getCols().get(i+1);
-			OutsideTempGraphParameters.GraphScale scale= outsideTempGraphParameters.getScale(minValues.get(i).floatValue(), maxValues.get(i).floatValue());
-			col.setScaleMax(scale.getFrom());
-			col.setScaleMin(scale.getTo());
-			col.setTicks(scale.getTicks());
+			Series series = graph.getGraphSeries().get(i).getSeries();
+			if (log.isDebugEnabled()){
+				log.debug("Series "+series.getName()+" "+series.getScaleClass());
+			}
+			if (series.getScaleClass()!=null){
+				AbstractGraphParameters graphParam=graphParameters.get(series.getScaleClass());
+				//Time column is the first one, skip it.
+				ChartCol col=chart.getCols().get(i+1);
+				AbstractGraphParameters.GraphScale scale= graphParam.getScale(minValues.get(i).floatValue(), maxValues.get(i).floatValue());
+				col.setScaleMax(scale.getFrom());
+				col.setScaleMin(scale.getTo());
+				col.setTicks(scale.getTicks());
+			}
 		}
 
 		return chart;
