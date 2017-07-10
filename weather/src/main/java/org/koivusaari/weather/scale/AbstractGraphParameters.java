@@ -12,6 +12,8 @@ public abstract class AbstractGraphParameters {
 		private float from;
 		private float to;
 		private float[] ticks;
+		private int gridLinesCount;
+		private int minorGridLinesCount=0;
 	
 		public GraphScale(String name, float from, float to,float[] ticks) {
 			super();
@@ -19,8 +21,36 @@ public abstract class AbstractGraphParameters {
 			this.from = from;
 			this.to = to;
 			this.ticks = ticks;
+			this.gridLinesCount = ticks.length;
 		}
 	
+		public GraphScale(String name, float from, float to,float[] ticks, int gridLinesCount, int minorGridLinesCount) {
+			super();
+			this.name = name;
+			this.from = from;
+			this.to = to;
+			this.ticks = ticks;
+			this.gridLinesCount = gridLinesCount;
+			this.minorGridLinesCount = minorGridLinesCount;
+		}
+
+		public int getMinorGridLinesCount() {
+			return minorGridLinesCount;
+		}
+
+		public void setMinorGridLinesCount(int minorGridLinesCount) {
+			this.minorGridLinesCount = minorGridLinesCount;
+		}
+
+		public int getGridLinesCount() {
+			return gridLinesCount;
+		}
+
+		public void setGridLinesCount(int gridLinesCount) {
+			this.gridLinesCount = gridLinesCount;
+		}
+
+
 		public boolean isBetween(float min, float max){
 			return min>=from && min<=to &&
 				   max>=from && max<=to;

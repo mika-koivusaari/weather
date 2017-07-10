@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.koivusaari.weather.scale.AbstractGraphParameters;
 import org.koivusaari.weather.scale.OutsideTempGraphParameters;
+import org.koivusaari.weather.scale.WindGraphParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -31,6 +32,10 @@ public class App
 	@Bean
 	public OutsideTempGraphParameters outsideTempGraphParameters(NamedParameterJdbcTemplate jdbcTemplate) {
 		return new OutsideTempGraphParameters(jdbcTemplate);
+	}
+	@Bean
+	public WindGraphParameters windGraphParameters() {
+		return new WindGraphParameters();
 	}
 	
 	@Bean

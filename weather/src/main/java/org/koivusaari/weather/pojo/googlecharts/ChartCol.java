@@ -10,7 +10,25 @@ public class ChartCol {
 	private Float scaleMin;
 	private Float scaleMax;
 	private float[] ticks;
+	private int gridLinesCount;
+	private int minorGridLinesCount;
 	
+	public int getGridLinesCount() {
+		return gridLinesCount;
+	}
+
+	public void setGridLinesCount(int gridLinesCount) {
+		this.gridLinesCount = gridLinesCount;
+	}
+
+	public int getMinorGridLinesCount() {
+		return minorGridLinesCount;
+	}
+
+	public void setMinorGridLinesCount(int minorGridLinesCount) {
+		this.minorGridLinesCount = minorGridLinesCount;
+	}
+
 	public float[] getTicks() {
 		return ticks;
 	}

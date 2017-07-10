@@ -54,7 +54,6 @@
           0: {title: 'C',
               viewWindow: {min: temp_rain_obj.cols[1].scaleMin,
                            max: temp_rain_obj.cols[1].scaleMax},
-              ticks: temp_rain_obj.cols[1].ticks
              },
           1: {title: 'mm',
               viewWindow: {min: 0,
@@ -90,6 +89,8 @@
 
     <script type="text/javascript">
 /* <![CDATA[ */
+      var wind_obj;
+      var options;
       // Load the Visualization API and the corechart package.
       //google.charts.load('current', {'packages':['corechart','line']});
       google.charts.load('current', {'packages':['corechart']});
@@ -111,17 +112,22 @@
         // Create the data table.
         var data = new google.visualization.DataTable(jsonData);
 
+        wind_obj = JSON.parse(jsonData);
         var formatter = new google.visualization.DateFormat({pattern: 'HH:mm'});
         formatter.format(data, 0);
 
         var obj = JSON.parse(jsonData);
-      var options = {
+      options = {
         hAxis: {
             format: 'HH',
             gridlines: {count: 8}
           },
         vAxes: {
-          0: {title: 'm/s'}
+          0: {title: 'm/s',
+              viewWindow: {min: wind_obj.cols[1].scaleMin,
+                           max: wind_obj.cols[1].scaleMax},
+              ticks: wind_obj.cols[1].ticks
+          }
         },
         backgroundColor: '#f1f8e9',
         seriesType: 'line',

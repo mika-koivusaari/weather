@@ -232,9 +232,11 @@ public class ChartDataController {
 				//Time column is the first one, skip it.
 				ChartCol col=chart.getCols().get(i+1);
 				AbstractGraphParameters.GraphScale scale= graphParam.getScale(minValues.get(i).floatValue(), maxValues.get(i).floatValue());
-				col.setScaleMax(scale.getFrom());
-				col.setScaleMin(scale.getTo());
+				col.setScaleMax(scale.getTo());
+				col.setScaleMin(scale.getFrom());
 				col.setTicks(scale.getTicks());
+				col.setGridLinesCount(scale.getGridLinesCount());
+				col.setMinorGridLinesCount(scale.getMinorGridLinesCount());
 			}
 		}
 
