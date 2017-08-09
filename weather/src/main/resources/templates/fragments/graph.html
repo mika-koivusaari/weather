@@ -52,10 +52,13 @@
           },
         vAxes: {
           0: {title: 'C',
+              gridlines: {color: '#ff9999'},
               viewWindow: {min: temp_rain_obj.cols[1].scaleMin,
                            max: temp_rain_obj.cols[1].scaleMax},
+              ticks: temp_rain_obj.cols[1].ticks
              },
           1: {title: 'mm',
+              gridlines: {color: '#9999ff'},
               viewWindow: {min: 0,
                            max: 14}
              }
