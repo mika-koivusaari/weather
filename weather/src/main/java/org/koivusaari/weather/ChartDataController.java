@@ -68,20 +68,19 @@ public class ChartDataController {
 	HashMap<Long,GraphDataSeries> dataSeriesMap=new HashMap<Long,GraphDataSeries>();
 	HashMap<Long,GraphDataSeries> graphSeriesMap=new HashMap<Long,GraphDataSeries>();
 	OutsideTempGraphParameters outsideTempGraphParameters;
-	@Autowired
 	Map<String,AbstractGraphParameters> graphParameters;
 	
 	public ChartDataController(final NamedParameterJdbcTemplate jdbcTemplate
 			                  ,final SensorRepository sensorRepository
 			                  ,final GraphRepository graphRepository
 			                  ,final GraphDataSeriesRepository graphDataSeriesRepository
-			                  ,final OutsideTempGraphParameters outsideTempGraphParameters) {
+			                  ,final Map<String,AbstractGraphParameters> graphParameters) {
 		super();
 		this.jdbcTemplate = jdbcTemplate;
 		this.sensorRepository = sensorRepository;
 		this.graphRepository = graphRepository;
 		this.graphDataSeriesRepository = graphDataSeriesRepository;
-		this.outsideTempGraphParameters = outsideTempGraphParameters;
+		this.graphParameters = graphParameters;
 	}
 
 	@CrossOrigin

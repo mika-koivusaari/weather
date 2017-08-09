@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.koivusaari.weather.pojo.ChartRow;
 import org.koivusaari.weather.pojo.Graph;
@@ -23,6 +24,7 @@ import org.koivusaari.weather.pojo.googlecharts.ChartV;
 import org.koivusaari.weather.repositories.GraphDataSeriesRepository;
 import org.koivusaari.weather.repositories.GraphRepository;
 import org.koivusaari.weather.repositories.SensorRepository;
+import org.koivusaari.weather.scale.AbstractGraphParameters;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
@@ -41,6 +43,8 @@ public class ChartDataControllerTest extends TestCase {
 	GraphRepository graphRepository;
 	@Mock
 	Graph graph;
+	@Mock
+	Map<String,AbstractGraphParameters> graphParameters;
 	private ChartDataController cdController;
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartDataControllerTest.class);
@@ -51,7 +55,8 @@ public class ChartDataControllerTest extends TestCase {
 		cdController=new ChartDataController(jdbcTemplate
 				                            ,sensorRepository
 				                            ,graphRepository
-				                            ,graphDataSeriesRepository);
+				                            ,graphDataSeriesRepository
+				                            ,graphParameters);
 	}
 
 //	public void testIndex() {
@@ -283,7 +288,7 @@ public class ChartDataControllerTest extends TestCase {
 		log.debug(params.toString());
 		
 		String selectExpected="SELECT time_series, d1.value, d2.value, d3.value\n"+
-                              "  FROM generate_series(:from::timestamp, :to::timestamp, '1 MINUTES') time_series\n"+
+                              "  FROM generate_series(:from::timestamp, :to::timestamp - INTERVAL '1 minute', '1 MINUTES') time_series\n"+
                               "       LEFT JOIN (select time as time, value as value from data where sensorid=:1 and time between :from::timestamp and :to::timestamp) d1 ON time_series = d1.time\n"+
                               "       LEFT JOIN (select time as time, value as value from data where sensorid=:2 and time between :from::timestamp and :to::timestamp) d2 ON time_series = d2.time\n"+
                               "       LEFT JOIN (select time as time, value as value from data where sensorid=:3 and time between :from::timestamp and :to::timestamp) d3 ON time_series = d3.time\n"+
@@ -329,7 +334,7 @@ public class ChartDataControllerTest extends TestCase {
 		log.debug(params.toString());
 		
 		String selectExpected="SELECT time_series, d1.value, d2.value, d3.value\n"+
-                              "  FROM generate_series(:from::timestamp, :to::timestamp, '1 MINUTES') time_series\n"+
+                              "  FROM generate_series(:from::timestamp, :to::timestamp - INTERVAL '1 minute', '1 MINUTES') time_series\n"+
                               "       LEFT JOIN (select date_trunc('HOUR',time) as time, AVG(value) as value from data where sensorid=:1 and time between :from::timestamp and :to::timestamp group by date_trunc('HOUR',time)) d1 ON time_series = d1.time\n"+
                               "       LEFT JOIN (select time as time, value as value from data where sensorid=:2 and time between :from::timestamp and :to::timestamp) d2 ON time_series = d2.time\n"+
                               "       LEFT JOIN (select round_minutes(time,10) as time, SUM(value) as value from data where sensorid=:3 and time between :from::timestamp and :to::timestamp group by round_minutes(time,10)) d3 ON time_series = d3.time\n"+
