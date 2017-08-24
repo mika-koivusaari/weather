@@ -28,8 +28,8 @@ public class OutsideTempGraphParameters extends AbstractGraphParameters {
 	private GraphScale previousStandard;
 	NamedParameterJdbcTemplate jdbcTemplate;
 	
-	private static final Long SCALE_ID=Long.valueOf(117);
-	private static final Long TEMP_ID=Long.valueOf(111);
+	protected static final Long SCALE_ID=Long.valueOf(117);
+	protected static final Long TEMP_ID=Long.valueOf(111);
 
 	public OutsideTempGraphParameters(NamedParameterJdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate=jdbcTemplate;
@@ -118,6 +118,7 @@ public class OutsideTempGraphParameters extends AbstractGraphParameters {
 			    GraphScale s = entry.getValue();
 				if (s.isBetween(min, max)){
 					scale=s;
+					break;
 				}
 			}
 		}

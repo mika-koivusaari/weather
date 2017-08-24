@@ -21,7 +21,6 @@ public abstract class AbstractGraphParameters {
 			this.from = from;
 			this.to = to;
 			this.ticks = ticks;
-			this.gridLinesCount = ticks.length;
 		}
 	
 		public GraphScale(String name, float from, float to,float[] ticks, int gridLinesCount, int minorGridLinesCount) {
