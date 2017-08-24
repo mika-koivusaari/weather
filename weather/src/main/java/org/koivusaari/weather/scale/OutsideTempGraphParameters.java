@@ -25,6 +25,7 @@ public class OutsideTempGraphParameters extends AbstractGraphParameters {
 
 	private LinkedHashMap<String,OutsideTempGraphParameters.GraphScale> scales=new LinkedHashMap<String,OutsideTempGraphParameters.GraphScale>();
 	private GraphScale previous;
+	private GraphScale previousStandard;
 	NamedParameterJdbcTemplate jdbcTemplate;
 	
 	private static final Long SCALE_ID=Long.valueOf(117);
@@ -106,7 +107,10 @@ public class OutsideTempGraphParameters extends AbstractGraphParameters {
 	
 	public GraphScale getScale(float min, float max){
 		GraphScale scale=null;
-		if (previous.isBetween(min, max)){
+		if (previousStandard!=null&&previousStandard.isBetween(min, max)){
+			scale=previousStandard;
+			previousStandard=null;
+		}else if (previous.isBetween(min, max)){
 			scale=previous;
 		} else {
 			for (Map.Entry<String, GraphScale> entry:scales.entrySet()){
@@ -119,7 +123,9 @@ public class OutsideTempGraphParameters extends AbstractGraphParameters {
 		}
 		if (scale==null){
 			scale=new GraphScale("Generated", Math.round(min-2), Math.round(max+2),null);
+			previousStandard=previous;
 		}
+		previous=scale;
 		return scale;
 	}
 }
