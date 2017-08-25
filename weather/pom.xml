@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.koivusaari</groupId>
 	<artifactId>weather</artifactId>
-	<version>0.4.2</version>
+	<version>0.5.0</version>
 	<name>weather</name>
 	<packaging>jar</packaging>
 
@@ -155,7 +155,7 @@
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<skip>true</skip>
+							<skip>false</skip>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -205,7 +205,7 @@
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<skip>true</skip>
+							<skip>false</skip>
 						</configuration>
 					</plugin>
 					<plugin>
