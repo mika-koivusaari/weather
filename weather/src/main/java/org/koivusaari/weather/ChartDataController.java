@@ -254,10 +254,13 @@ public class ChartDataController {
 			log.debug("lastData="+lastData);
 		}
 		
-		final Pattern groupByPattern = Pattern.compile("(\\d*) ?(\\D+)"); //numbers as groups  
+		final String pattern="(\\d*) ?(\\D+)"; //numbers as groups
+		final Pattern groupByPattern = Pattern.compile(pattern);  
 		final Matcher m=groupByPattern.matcher(trunc);
-		if (log.isDebugEnabled()){
-			log.debug("match found="+m.matches());
+		if (m.matches()) {
+			log.debug("match found");
+		} else{
+			log.error("Match not found. Pattern \""+pattern+"\" trunc \""+trunc+"\".");
 		}
 		String amount=m.group(1);
 		if ("".equals(amount)){
